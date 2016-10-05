@@ -1,14 +1,23 @@
-import crawler.Constants;
-import crawler.Crawler;
+import java.io.IOException;
 
-import java.util.Date;
+import config.ConfigurationManager;
+import csv.CSVReader;
+import extractors.Extractor;
+import extractors.ReviewExtractor;
 
-//Start of the program
-public class Main {
+public class Run {
 
     public  static void main(String[] args){
-        Crawler crawler = new Crawler();
 
-        crawler.startGooglePlayStoreCrawler();
+    	CSVReader reader = new CSVReader(null);
+		ConfigurationManager config = null;
+		try {
+			config = ConfigurationManager.getInstance();
+		} catch (IOException e) {
+			System.err.println("An error occurred while loading the configuration");
+		}
+    	
+    	Extractor extractor = new ReviewExtractor(reader.getAppList(), config);
+    	extractor.extract();
     }
 }

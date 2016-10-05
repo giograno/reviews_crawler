@@ -1,6 +1,9 @@
-package crawler.info;
+
 
 import java.io.File;
+
+import beans.AppInfo;
+import crawler.GooglePlayStoreCrawlerInfo;
 
 
 
@@ -24,7 +27,7 @@ public class Main{
 			String browserChoice = "Firefox";
 			
 			// Creating a new crawler
-			GooglePlayStoreCrawler googlePlayStoreCrawler = new GooglePlayStoreCrawler(browserChoice, webDriverFile);
+			GooglePlayStoreCrawlerInfo googlePlayStoreCrawler = new GooglePlayStoreCrawlerInfo(browserChoice, webDriverFile);
 				
 			
 			for (int i = 0; i<packageNames.length;i++){

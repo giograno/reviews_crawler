@@ -1,6 +1,7 @@
-package crawler.info;
+package beans;
 
 public class AppInfo {
+	
 	private String lastUpdate;
 	private String currentVersion;
 

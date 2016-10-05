@@ -1,6 +1,4 @@
-/**
- * Get all the reviews of a app based on the given app name
- */
+
 package crawler;
 
 import org.openqa.selenium.By;
@@ -12,6 +10,9 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import beans.Review;
+import utils.WebElements;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,157 +21,160 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class GooglePlayStoreCrawler {
-    private static final int searchLimit = 3; //TODO: only testing purpose --> remove afterwards
-    private int count = 0;
-    private boolean dateOfLastCrawlIsReached = false;
+public class PlayStoreCrawler implements Crawler {
 
-    //TODO: move them to right place --> Constants or into method
-    private static final String play_store_base_link = "https://play.google.com/store/apps/details?id=com.";
-    private static final String next_reviews_button = "//button[@aria-label='See More' and @class='expand-button expand-next']";
-    private static final String reviews_language = "en";
+	private boolean dateOfLastCrawlIsReached = false;
 
-    private Date dateOfLastCrawl = null; // is given as parameter if already crawled before
-    private String appName = null;
-    private WebDriver driver = null;
-    private WebDriverWait wait = null;
+	private Date dateOfLastCrawl;
+	private String appName = null;
+	private WebDriver driver = null;
+	private WebDriverWait wait = null;
 
-    public GooglePlayStoreCrawler(String appName, Date dateOfLastCrawl){
-        this.appName = appName;
+	// reviews extracted
+	private List<Review> reviews;
 
-        if(dateOfLastCrawl == null){
-            System.out.println("Crawl all existing reviews of "+ appName);
-        }else{
-            System.out.println("Crawling all new reviews of "+ appName + " since " + dateOfLastCrawl);
-            this.dateOfLastCrawl = dateOfLastCrawl;
-        }
-    }
+	// TODO: date of last crawl could be null?
+	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
+		this.appName = appName;
 
-    public List<Review> getReviewsByAppName(){
+		if (dateOfLastCrawl == null) {
+			System.out.println("Crawl all existing reviews of " + appName);
+		} else {
+			System.out.println("Crawling all new reviews of " + appName + " since " + dateOfLastCrawl);
+			this.dateOfLastCrawl = dateOfLastCrawl;
+		}
+	}
 
-        driver = connectWithDriverOfLink(this.appName);
-        clickNextButton();
-        scrollPage(0,-250);
-        changeReviewSortOrderToNewest();
-        moveHoveSoItShowsReviewDate();
+	@Override
+	public void startCrawling() {
+		driver = connectWithDriverOfLink(this.appName);
+		clickNextButton();
+		scrollPage(0, -250);
+		changeReviewSortOrderToNewest();
+		moveHoveSoItShowsReviewDate();
 
-        return getReviewsByDriver();
-    }
+		this.reviews = getReviewsByDriver();
+	}
 
-    private WebDriver connectWithDriverOfLink(String appName){
-        String appLink = play_store_base_link + appName + "&hl=" + reviews_language;
+	public List<Review> getReviews() {
+		return this.reviews;
+	}
 
-        WebDriver driver = new FirefoxDriver();
-        driver.manage().window().maximize();
-        driver.navigate().to(appLink);
+	private WebDriver connectWithDriverOfLink(String appName) {
+		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + "&hl=" + WebElements.REVIEWS_LANGUAGE;
 
-        return driver;
-    }
-    private void clickNextButton() {
-        //Wait til nextbutton is clickable
-        this.wait = new WebDriverWait(driver, 10);
-        this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(next_reviews_button)));
+		WebDriver driver = new FirefoxDriver();
+		driver.manage().window().maximize();
+		driver.navigate().to(appLink);
 
-        WebElement nextButton = driver.findElements(By.xpath(next_reviews_button)).get(1);
-        nextButton.click();
-    }
-    private void scrollPage(int xAxis, int yAxis){
-        JavascriptExecutor jse = (JavascriptExecutor)driver;
-        jse.executeScript("window.scrollBy(" + xAxis + "," + yAxis + ")", "");
-    }
-    private void changeReviewSortOrderToNewest() {
-        //Open sortOrder Dropdown menu
-        this.wait = new WebDriverWait(driver, 10);
-        WebElement sortOrderButton = driver.findElements(By.className("dropdown-menu")).get(0);
-        this.wait.until(ExpectedConditions.elementToBeClickable(sortOrderButton));
-        sortOrderButton.click();
+		return driver;
+	}
 
-        //Change order to 'Newest'
-        this.wait = new WebDriverWait(driver, 10);
-        WebElement newestOrderButton = driver.findElement(By.xpath("//button[contains(.,'Newest')]"));
-        this.wait.until(ExpectedConditions.elementToBeClickable(newestOrderButton));
-        newestOrderButton.click();
-    }
-    //Focuses the mousehover somewhere else, otherwise review date is hidden
-    private void moveHoveSoItShowsReviewDate() {
-        WebElement hoverElement = driver.findElement(By.className("score"));
-        Actions builder = new Actions(driver);
-        builder.moveToElement(hoverElement).perform();
-    }
+	private void clickNextButton() {
+		// wait until next button could be clicked
+		this.wait = new WebDriverWait(driver, 10);
+		this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)));
 
+		WebElement nextButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)).get(1);
+		nextButton.click();
+	}
 
+	private void scrollPage(int xAxis, int yAxis) {
+		JavascriptExecutor jse = (JavascriptExecutor) driver;
+		jse.executeScript("window.scrollBy(" + xAxis + "," + yAxis + ")", "");
+	}
 
-    private List<Review> getReviewsByDriver() {
-        List<Review> collectedReviews = new ArrayList<Review>();
+	private void changeReviewSortOrderToNewest() {
+		// open sort order drop down menu
+		this.wait = new WebDriverWait(driver, 10);
+		WebElement sortOrderButton = driver.findElements(By.className("dropdown-menu")).get(0);
+		this.wait.until(ExpectedConditions.elementToBeClickable(sortOrderButton));
+		sortOrderButton.click();
 
-        while (nextButtonExists(driver) && !dateOfLastCrawlIsReached) {
-            sleep(2500);
-            List <WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
+		// change order to 'Newest'
+		this.wait = new WebDriverWait(driver, 10);
+		WebElement newestOrderButton = driver.findElement(By.xpath("//button[contains(.,'Newest')]"));
+		this.wait.until(ExpectedConditions.elementToBeClickable(newestOrderButton));
+		newestOrderButton.click();
+	}
 
-            collectedReviews = reviewsSortedOutByDate(newReviewsAsWebElement, dateOfLastCrawl, collectedReviews);
-            clickNextButton();
-        }
-        return collectedReviews;
-    }
+	// Focuses the mousehover somewhere else, otherwise review date is hidden
+	private void moveHoveSoItShowsReviewDate() {
+		WebElement hoverElement = driver.findElement(By.className("score"));
+		Actions builder = new Actions(driver);
+		builder.moveToElement(hoverElement).perform();
+	}
 
-    private List<WebElement> getAllReviewsOfCurrentPage() {
-        final String reviewClassName = "single-review";
-        return driver.findElements(By.className(reviewClassName));
-    }
+	private List<Review> getReviewsByDriver() {
+		List<Review> collectedReviews = new ArrayList<Review>();
 
-    private List<Review> reviewsSortedOutByDate(List<WebElement> crawledReviews, Date dateOfLastCrawl, List<Review> sortedReviews) {
+		while (nextButtonExists(driver) && !dateOfLastCrawlIsReached) {
+			sleep(2500);
+			List<WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 
+			collectedReviews = reviewsSortedOutByDate(newReviewsAsWebElement, dateOfLastCrawl, collectedReviews);
+			clickNextButton();
+		}
+		return collectedReviews;
+	}
 
-        DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
-        Date date = null;
+	private List<WebElement> getAllReviewsOfCurrentPage() {
+		final String reviewClassName = "single-review";
+		return driver.findElements(By.className(reviewClassName));
+	}
 
-        for (WebElement review : crawledReviews) {
-            //sort out the empty strings
-            if(!review.getText().equals("")) {
-                String dateAsText = review.findElement(By.className("review-date")).getText();
-                String reviewText = review.findElement(By.className("review-body")).getText();
+	private List<Review> reviewsSortedOutByDate(List<WebElement> crawledReviews, Date dateOfLastCrawl,
+			List<Review> sortedReviews) {
 
-                if(dateOfLastCrawl != null){
-                    //Parse date into Dateformat
-                    try {
-                        date = formatter.parse(dateAsText);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    //add to List if newer than lastCrawl
-                    if(date.after(dateOfLastCrawl)) {
-                        System.out.println(dateAsText + " is newer than lastCrawl ");
-                        Review newReview = new Review(reviewText, date, 5);
-                        sortedReviews.add(newReview);
-                    }else{
-                        dateOfLastCrawlIsReached = true;
-                        return sortedReviews;
-                    }
+		DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
+		Date date = null;
 
-                }
-            }
-        }
-        return sortedReviews;
-    }
+		for (WebElement review : crawledReviews) {
+			// sort out the empty strings
+			if (!review.getText().equals("")) {
+				String dateAsText = review.findElement(By.className("review-date")).getText();
+				String reviewText = review.findElement(By.className("review-body")).getText();
 
-    private boolean nextButtonExists(WebDriver driver) {
-        List<WebElement> arrowButton = driver.findElements(By.xpath(next_reviews_button));
+				if (dateOfLastCrawl != null) {
+					// Parse date into Dateformat
+					try {
+						date = formatter.parse(dateAsText);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					// add to List if newer than lastCrawl
+					if (date.after(dateOfLastCrawl)) {
+						System.out.println(dateAsText + " is newer than lastCrawl ");
+						Review newReview = new Review(reviewText, date, 5);
+						sortedReviews.add(newReview);
+					} else {
+						dateOfLastCrawlIsReached = true;
+						return sortedReviews;
+					}
 
-        if(arrowButton.size() >= 1){
-            return true;
-        }else{
-            return false;
-        }
-    }
+				}
+			}
+		}
+		return sortedReviews;
+	}
 
-    //TODO: change to 'presenceOfElementLocated', but not working
-    private void sleep(int milliseconds){
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	private boolean nextButtonExists(WebDriver driver) {
+		List<WebElement> arrowButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
+
+		if (arrowButton.size() >= 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// TODO: change to 'presenceOfElementLocated', but not working
+	private void sleep(int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
-
-

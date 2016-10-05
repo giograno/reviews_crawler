@@ -1,7 +1,6 @@
 package config;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -11,6 +10,11 @@ import java.util.UUID;
 
 import utils.Utils;
 
+/**
+ * Handles the tool configuration
+ * @author giograno
+ *
+ */
 public class ConfigurationManager {
 	
 	private static final String STATIC_CONTENT = "---------STATIC+CONTENT";

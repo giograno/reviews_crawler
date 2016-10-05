@@ -1,7 +1,7 @@
 /**
  * Get all the reviews of a app based on the given app name
  */
-package crawler.info;
+package crawler;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -13,7 +13,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-public class GooglePlayStoreCrawler {
+import beans.AppInfo;
+
+public class GooglePlayStoreCrawlerInfo {
 
 	private static final String play_store_base_link = "https://play.google.com/store/apps/details?id=";
 
@@ -23,7 +25,7 @@ public class GooglePlayStoreCrawler {
 
 	private WebDriver driver = null;
 
-	public GooglePlayStoreCrawler(String browserChoice, File webDriverFile) {
+	public GooglePlayStoreCrawlerInfo(String browserChoice, File webDriverFile) {
 		if (browserChoice.equalsIgnoreCase("Chrome")) {
 			System.setProperty("webdriver.chrome.driver", webDriverFile.getAbsolutePath());
 			driver = new ChromeDriver();
