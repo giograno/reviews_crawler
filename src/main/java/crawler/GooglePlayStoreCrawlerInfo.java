@@ -1,6 +1,3 @@
-/**
- * Get all the reviews of a app based on the given app name
- */
 package crawler;
 
 import java.io.File;

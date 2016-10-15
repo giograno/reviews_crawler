@@ -1,4 +1,3 @@
-
 package crawler;
 
 import org.openqa.selenium.By;
@@ -11,8 +10,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import beans.Review;
+import csv.CSVWriter;
 import utils.WebElements;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class PlayStoreCrawler implements Crawler {
+public class PlayStoreCrawler extends Crawler {
 
 	private boolean dateOfLastCrawlIsReached = false;
 
@@ -29,11 +30,8 @@ public class PlayStoreCrawler implements Crawler {
 	private String appName = null;
 	private WebDriver driver = null;
 	private WebDriverWait wait = null;
-
-	// reviews extracted
 	private List<Review> reviews;
 
-	// TODO: date of last crawl could be null?
 	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
 		this.appName = appName;
 
@@ -46,7 +44,7 @@ public class PlayStoreCrawler implements Crawler {
 	}
 
 	@Override
-	public void startCrawling() {
+	public void run() {
 		driver = connectWithDriverOfLink(this.appName);
 		clickNextButton();
 		scrollPage(0, -250);
@@ -54,6 +52,17 @@ public class PlayStoreCrawler implements Crawler {
 		moveHoveSoItShowsReviewDate();
 
 		this.reviews = getReviewsByDriver();
+
+		for (Review review : reviews) {
+			try {
+				System.out.println("Writing: " + review.getReviewText());
+				CSVWriter.writeline(review.getFieldsToExport());
+			} catch (IOException e) {
+				System.err.println("An error occurred during the export of a review");
+			}
+		}
+		
+		this.driver.close();
 	}
 
 	public List<Review> getReviews() {
@@ -144,7 +153,6 @@ public class PlayStoreCrawler implements Crawler {
 					}
 					// add to List if newer than lastCrawl
 					if (date.after(dateOfLastCrawl)) {
-						System.out.println(dateAsText + " is newer than lastCrawl ");
 						Review newReview = new Review(this.appName, reviewText, date, 5);
 						sortedReviews.add(newReview);
 					} else {
@@ -176,5 +184,4 @@ public class PlayStoreCrawler implements Crawler {
 			e.printStackTrace();
 		}
 	}
-
 }
