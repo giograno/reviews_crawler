@@ -145,7 +145,7 @@ public class PlayStoreCrawler implements Crawler {
 					// add to List if newer than lastCrawl
 					if (date.after(dateOfLastCrawl)) {
 						System.out.println(dateAsText + " is newer than lastCrawl ");
-						Review newReview = new Review(reviewText, date, 5);
+						Review newReview = new Review(this.appName, reviewText, date, 5);
 						sortedReviews.add(newReview);
 					} else {
 						dateOfLastCrawlIsReached = true;

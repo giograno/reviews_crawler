@@ -7,6 +7,8 @@ import java.util.List;
 
 import beans.Review;
 import config.ConfigurationManager;
+import crawler.Crawler;
+import crawler.CrawlerFactory;
 import crawler.PlayStoreCrawler;
 import csv.CSVWriter;
 
@@ -14,6 +16,7 @@ public class ReviewExtractor extends Extractor {
 
 	private Date dateOfLastCrawl = null;
 	private ConfigurationManager configurationManager;
+	private String store;
 
 	public ReviewExtractor(ArrayList<String> appsToMine, ConfigurationManager configurationManager) {
 		super(appsToMine);
@@ -24,6 +27,8 @@ public class ReviewExtractor extends Extractor {
 	public void extract() {
 		
 		dateOfLastCrawl = configurationManager.getDateOfLastCrawl();
+		store = this.configurationManager.getStoreToCrawl();
+			
 		int noThreads = configurationManager.getNumberOfThreadToUse();
 		int numberOfApps = this.appsToMine.size();
 		int innerLoop = numberOfApps/noThreads;
@@ -31,19 +36,20 @@ public class ReviewExtractor extends Extractor {
 		for (int i = 0; i < noThreads; i++) {
 			for (int j = 0; j < innerLoop; j++) {
 				
-				boolean inBounds = ((i+j+1) >= 0) && ((i+j+1) < this.appsToMine.size());
+				boolean inBounds = ((i+j+1) >= 0) && ((i+j+1) <= this.appsToMine.size());
 				
 				if (!inBounds)
 					break;
 				
-				final String currentApp = this.appsToMine.get(i+j+1);
+				final String currentApp = this.appsToMine.get(i+j);
 	            new Thread(new Runnable() {
 	                public void run() {
-	                    PlayStoreCrawler googlePlayStoreCrawler = new PlayStoreCrawler(currentApp, dateOfLastCrawl);
-
+	                    Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(store, currentApp, dateOfLastCrawl); 
+	                    googlePlayStoreCrawler.startCrawling();
 	                    List<Review> googleReviews = googlePlayStoreCrawler.getReviews();
 	                    for (Review review : googleReviews) {
 							try {
+								System.out.println("Writing: " + review.getReviewText());
 								CSVWriter.writeline(review.getFieldsToExport());
 							} catch (IOException e) {
 								System.err.println("An error occurred during the export of a review");

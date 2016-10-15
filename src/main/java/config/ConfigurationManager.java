@@ -97,11 +97,23 @@ public class ConfigurationManager {
 	}
 	
 	/**
+	 * Returns the filename of the output CSV file
+	 * @return
+	 */
+	public String getOutputCsv() {
+		return this.properties.getProperty("output.csv", "reviews.csv");
+	}
+	
+	/**
 	 * Returns the date of last crawl
 	 * @return
 	 */
 	public Date getDateOfLastCrawl() {
-		return Utils.getDateFromString(this.properties.getProperty("lastCrawl", ""));
+		String auxDate = this.properties.getProperty("lastCrawl", "");
+		if (auxDate.equals(""))
+			return null;
+		else 
+			return Utils.getDateFromString(auxDate);
 	}
 	
 	/**

@@ -13,13 +13,13 @@ public class CSVWriter {
 	
 	static {
 		try {
-			writer = new FileWriter(ConfigurationManager.getInstance().getInputCsv());
+			writer = new FileWriter(ConfigurationManager.getInstance().getOutputCsv());
 		} catch (IOException e) {
 			System.err.println("An error occurred while reading the input csv");
 		}
 	}
 	
-	public static void writeline(List<String> linesToWrite) throws IOException {
+	public synchronized static void writeline(List<String> linesToWrite) throws IOException {
 		writeLine(linesToWrite, DEFAULT_SEPARATOR);
 	}
 	
@@ -39,6 +39,7 @@ public class CSVWriter {
 		
 		builder.append("\n");
 		writer.append(builder.toString());
+		writer.flush();
 	}
 	
     private static String followCVSformat(String value) {
@@ -47,8 +48,9 @@ public class CSVWriter {
         
         if (result.contains("\"")) 
             result = result.replace("\"", "\"\"");
+        if (result.contains(","))
+        	result = result.replace(",", " ");
         
         return result;
     }
-	
 }
