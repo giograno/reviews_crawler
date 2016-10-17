@@ -70,7 +70,7 @@ public class PlayStoreCrawler extends Crawler {
 	}
 
 	private WebDriver connectWithDriverOfLink(String appName) {
-		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + "&hl=" + WebElements.REVIEWS_LANGUAGE;
+		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
 		WebDriver driver = new FirefoxDriver();
 		driver.manage().window().maximize();

@@ -8,33 +8,23 @@ import config.ConfigurationManager;
 import crawler.Crawler;
 import crawler.CrawlerFactory;
 
-public class ReviewExtractor extends Extractor {
+public class AppInfoExtractor extends Extractor {
 
 	private ConfigurationManager configurationManager;
 
-	public ReviewExtractor(ArrayList<String> appsToMine, ConfigurationManager configurationManager) {
-		super(appsToMine);
+	public AppInfoExtractor(ArrayList<String> inputApps, ConfigurationManager configurationManager) {
+		super(inputApps);
 		this.configurationManager = configurationManager;
 	}
 
 	@Override
 	public void extract() {
-
 		ExecutorService executor = Executors.newFixedThreadPool(this.configurationManager.getNumberOfThreadToUse());
 
-		try {
-			ConfigurationManager.getInstance().updateDateOfLastCrawl();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-		
-		for (String currentApp : appsToMine) {
-			Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, currentApp, "google");
-			executor.execute(googlePlayStoreCrawler);
-		}
-		
+		Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, null, "playInfo");
+		executor.execute(googlePlayStoreCrawler);
+
 		executor.shutdown();
-		
 	}
 
 }

@@ -1,5 +1,6 @@
 package config;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -101,7 +102,7 @@ public class ConfigurationManager {
 	 * @return
 	 */
 	public String getOutputCsv() {
-		return this.properties.getProperty("output.csv", "reviews.csv");
+		return this.properties.getProperty("reviews.output.csv", "reviews.csv");
 	}
 	
 	/**
@@ -131,6 +132,14 @@ public class ConfigurationManager {
 	 */
 	public int getNumberOfThreadToUse() {
 		return Integer.parseInt(this.properties.getProperty("thread", "1"))	;
+	}
+	
+	public File getWebDriver() {
+		return new File(this.properties.getProperty("webdriver"));
+	}
+	
+	public String getBrowserChoice() {
+		return this.properties.getProperty("browser");
 	}
 	
 }
