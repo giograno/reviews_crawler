@@ -7,6 +7,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Represents a review for an app; it stores the text review, the review date
+ * and the number of stars
+ * @author giograno
+ *
+ */
 public class Review implements Exportable {
 	private String appName;
 	private String reviewText;

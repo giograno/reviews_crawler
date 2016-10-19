@@ -21,20 +21,15 @@ public class ReviewExtractor extends Extractor {
 	public void extract() {
 
 		ExecutorService executor = Executors.newFixedThreadPool(this.configurationManager.getNumberOfThreadToUse());
-
-		try {
-			ConfigurationManager.getInstance().updateDateOfLastCrawl();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-		
+	
 		for (String currentApp : appsToMine) {
-			Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, currentApp, "google");
+			ArrayList<String> aux = new ArrayList<>();
+			aux.add(currentApp);
+			Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, aux, "google");
 			executor.execute(googlePlayStoreCrawler);
 		}
 		
 		executor.shutdown();
-		
 	}
 
 }

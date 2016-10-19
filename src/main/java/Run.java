@@ -47,6 +47,12 @@ public class Run {
 			break;
 		}
 		extractor.extract();
+		
+		try {
+			ConfigurationManager.getInstance().updateDateOfLastCrawl();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
 	}
 
 	public void interpret(String arg) {

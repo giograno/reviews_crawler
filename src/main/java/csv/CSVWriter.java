@@ -6,6 +6,11 @@ import java.util.List;
 
 import config.ConfigurationManager;
 
+/**
+ * An utility class used to write the extracted info to a output csv
+ * @author giograno
+ *
+ */
 public class CSVWriter {
 
 	private static FileWriter writer = null;
@@ -19,18 +24,29 @@ public class CSVWriter {
 		}
 	}
 	
+	/**
+	 * Writes a line to the default csv specified by the configuration file
+	 * @param linesToWrite
+	 * @throws IOException
+	 */
 	public synchronized static void writeline(List<String> linesToWrite) throws IOException {
 		writeLine(linesToWrite, DEFAULT_SEPARATOR);
 	}
 	
-	public static void writeLine(List<String> linesToWrite, char separators) throws IOException {
+	/**
+	 * Writes a line to the default csv; a separator could be specified
+	 * @param linesToWrite
+	 * @param separator
+	 * @throws IOException
+	 */
+	public synchronized static void writeLine(List<String> linesToWrite, char separator) throws IOException {
 		boolean first = true;
 		
 		StringBuilder builder = new StringBuilder();
 		
 		for (String line : linesToWrite) {
 			if (!first)
-				builder.append(separators);
+				builder.append(separator);
 			
 			builder.append(followCVSformat(line));
 			
@@ -42,7 +58,7 @@ public class CSVWriter {
 		writer.flush();
 	}
 	
-    private static String followCVSformat(String value) {
+    private synchronized static String followCVSformat(String value) {
 
         String result = value;
         

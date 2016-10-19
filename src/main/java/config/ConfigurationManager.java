@@ -134,12 +134,20 @@ public class ConfigurationManager {
 		return Integer.parseInt(this.properties.getProperty("thread", "1"))	;
 	}
 	
+	/**
+	 * Returns the <code>File</code> for the web driver used for Chrome
+	 * @return
+	 */
 	public File getWebDriver() {
 		return new File(this.properties.getProperty("webdriver"));
 	}
 	
+	/**
+	 * Returns the browser choice 
+	 * @return
+	 */
 	public String getBrowserChoice() {
-		return this.properties.getProperty("browser");
+		return this.properties.getProperty("browser", "firefox");
 	}
 	
 }

@@ -3,6 +3,12 @@ package beans;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the basic info about an app, like the last update date
+ * and the current version
+ * @author giograno
+ *
+ */
 public class AppInfo implements Exportable {
 	
 	private String appName;

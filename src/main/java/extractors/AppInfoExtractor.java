@@ -21,7 +21,8 @@ public class AppInfoExtractor extends Extractor {
 	public void extract() {
 		ExecutorService executor = Executors.newFixedThreadPool(this.configurationManager.getNumberOfThreadToUse());
 
-		Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, null, "playInfo");
+		Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, this.appsToMine, "playInfo");
+		
 		executor.execute(googlePlayStoreCrawler);
 
 		executor.shutdown();

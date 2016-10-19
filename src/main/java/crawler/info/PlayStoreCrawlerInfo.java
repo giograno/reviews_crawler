@@ -15,6 +15,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import beans.AppInfo;
 import config.ConfigurationManager;
 import crawler.Crawler;
+import utils.Utils;
 import utils.WebElements;
 
 public class PlayStoreCrawlerInfo extends Crawler {
@@ -24,24 +25,22 @@ public class PlayStoreCrawlerInfo extends Crawler {
 	private String driverPath;
 	private ConfigurationManager config;
 	private WebDriver driver;
+	private String currentApp;
 
-	public PlayStoreCrawlerInfo(ConfigurationManager config) {
+	public PlayStoreCrawlerInfo(ConfigurationManager config, ArrayList<String> appList) {
+		this.appList = appList;
 		this.config = config;
 		this.browserChoice = this.config.getBrowserChoice();
 		this.driverPath = this.config.getWebDriver().getAbsolutePath();
 
-		if (browserChoice.equalsIgnoreCase("Chrome")) {
-
+		if (browserChoice.equalsIgnoreCase("chrome")) {
 			System.setProperty("webdriver.chrome.driver", driverPath);
 			driver = new ChromeDriver();
-
-		} else if (browserChoice.equalsIgnoreCase("Firefox")) {
+		} else if (browserChoice.equalsIgnoreCase("firefox")) {
 			driver = new FirefoxDriver();
+		} else if((browserChoice.equalsIgnoreCase("")) || (this.driverPath == null)) {
+			throw new RuntimeException("Unvalid browser choice or driver path");
 		}
-	}
-
-	public void setAppList(ArrayList<String> appList) {
-		this.appList = appList;
 	}
 
 	@Override
@@ -49,6 +48,7 @@ public class PlayStoreCrawlerInfo extends Crawler {
 
 		for (String appName : appList) {
 
+			this.currentApp = appName;
 			String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 			connectTo(appLink);
 			AppInfo info = this.getInfo();
@@ -59,8 +59,8 @@ public class PlayStoreCrawlerInfo extends Crawler {
 					e.printStackTrace();
 				}
 			}
-			
 		}
+		this.closeDriver();
 	}
 
 	public AppInfo getAppInformation(String appLink) throws Exception {
@@ -73,6 +73,10 @@ public class PlayStoreCrawlerInfo extends Crawler {
 		driver.quit();
 	}
 
+	/**
+	 * TODO: remove pattern
+	 * @param appLink
+	 */
 	private void connectTo(String appLink) {
 		if (appLink.startsWith(WebElements.PLAY_STORE_BASE_LINK)) {
 			boolean found = false;
@@ -105,8 +109,9 @@ public class PlayStoreCrawlerInfo extends Crawler {
 				appInfo = new AppInfo();
 				String version = driver.findElement(By.xpath(WebElements.CURRENT_VERSION)).getText();
 				String upDate = driver.findElement(By.xpath(WebElements.LAST_UPDATE)).getText();
+				appInfo.setAppName(currentApp);
 				appInfo.setCurrentVersion(version);
-				appInfo.setLastUpdate(upDate);
+				appInfo.setLastUpdate(Utils.convertReviewFormat(upDate));
 			} catch (NoSuchElementException e) {
 				return null;
 			}
