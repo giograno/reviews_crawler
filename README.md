@@ -17,7 +17,7 @@ extractor=reviews
 the tool will mine the reviews of the given apps. Instead, with
 
 ```
-extractor=reviews
+extractor=info
 ```
 
 the tool will mine the info about an app, like the current version and the last update time.
