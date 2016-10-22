@@ -13,6 +13,8 @@ hs_err_pid*
 
 #csv files
 *.csv
+#txt files
+*.txt
 
 #Maven 
 
