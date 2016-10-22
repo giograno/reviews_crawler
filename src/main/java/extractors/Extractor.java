@@ -16,5 +16,9 @@ public abstract class Extractor {
 	}
 	
 	public abstract void extract();
+	
+	public void printNumberOfInputApps() {
+		System.out.println(appsToMine.size() + " apps to mine");
+	}
 
 }

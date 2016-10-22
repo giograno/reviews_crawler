@@ -38,7 +38,7 @@ public class PlayStoreCrawlerInfo extends Crawler {
 			driver = new ChromeDriver();
 		} else if (browserChoice.equalsIgnoreCase("firefox")) {
 			driver = new FirefoxDriver();
-		} else if((browserChoice.equalsIgnoreCase("")) || (this.driverPath == null)) {
+		} else if ((browserChoice.equalsIgnoreCase("")) || (this.driverPath == null)) {
 			throw new RuntimeException("Unvalid browser choice or driver path");
 		}
 	}
@@ -51,6 +51,11 @@ public class PlayStoreCrawlerInfo extends Crawler {
 			this.currentApp = appName;
 			String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 			connectTo(appLink);
+			if (this.isAppLinkNotValid()) {
+				// trying to remove the language
+				appLink = WebElements.PLAY_STORE_BASE_LINK + appName;
+				connectTo(appLink);
+			}
 			AppInfo info = this.getInfo();
 			if (info != null) {
 				try {
@@ -75,6 +80,7 @@ public class PlayStoreCrawlerInfo extends Crawler {
 
 	/**
 	 * TODO: remove pattern
+	 * 
 	 * @param appLink
 	 */
 	private void connectTo(String appLink) {
@@ -94,7 +100,7 @@ public class PlayStoreCrawlerInfo extends Crawler {
 
 			}
 
-			driver.manage().window().setPosition(new Point(-2000, 0));
+			driver.manage().window().maximize();
 			driver.navigate().to(appLink);
 
 		}
@@ -102,21 +108,50 @@ public class PlayStoreCrawlerInfo extends Crawler {
 	}
 
 	private AppInfo getInfo() {
-		Boolean errorPresent = driver.findElements(By.id("error-section")).size() > 0;
 		AppInfo appInfo = null;
-		if (!errorPresent) {
+		
+		if (!isAppLinkNotValid()) {
+
 			try {
 				appInfo = new AppInfo();
-				String version = driver.findElement(By.xpath(WebElements.CURRENT_VERSION)).getText();
-				String upDate = driver.findElement(By.xpath(WebElements.LAST_UPDATE)).getText();
+				String upDate = "n.d";
+				String version = "n.d";
+
+				if (this.aLastUpdateExists())
+					upDate = driver.findElement(By.xpath(WebElements.LAST_UPDATE)).getText();
+				if (this.aCurrentVersionExists())
+					version = driver.findElement(By.xpath(WebElements.CURRENT_VERSION)).getText();
+				else if (this.aRequiredSoftwareExists())
+					version = driver.findElement(By.xpath(WebElements.REQUIRE_SOFTWARE)).getText();
+
 				appInfo.setAppName(currentApp);
 				appInfo.setCurrentVersion(version);
 				appInfo.setLastUpdate(Utils.convertReviewFormat(upDate));
+				System.out.println("Mined app info for: " + this.currentApp);
 			} catch (NoSuchElementException e) {
+				System.err.println("An error occurred while fetching current version and last update");
 				return null;
 			}
+			
+		} else {
+			System.out.println("Not found page for: " + this.currentApp);
 		}
 		return appInfo;
+	}
 
+	private boolean aLastUpdateExists() {
+		return driver.findElements(By.xpath(WebElements.LAST_UPDATE)).size() > 0;
+	}
+
+	private boolean aCurrentVersionExists() {
+		return driver.findElements(By.xpath(WebElements.CURRENT_VERSION)).size() > 0;
+	}
+
+	private boolean aRequiredSoftwareExists() {
+		return driver.findElements(By.xpath(WebElements.REQUIRE_SOFTWARE)).size() > 0;
+	}
+
+	private boolean isAppLinkNotValid() {
+		return driver.findElements(By.id("error-section")).size() > 0;
 	}
 }

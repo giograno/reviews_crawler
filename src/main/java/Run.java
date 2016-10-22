@@ -55,6 +55,7 @@ public class Run {
 			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "info");
 			break;
 		}
+		extractor.printNumberOfInputApps();
 		extractor.extract();
 		
 		try {
