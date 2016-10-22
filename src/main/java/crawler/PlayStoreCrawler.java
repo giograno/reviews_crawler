@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import beans.Review;
-import csv.CSVWriter;
+import io.CSVWriter;
 import utils.WebElements;
 
 import java.io.IOException;

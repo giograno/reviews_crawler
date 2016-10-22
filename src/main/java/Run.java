@@ -1,9 +1,11 @@
 import java.io.IOException;
 
 import config.ConfigurationManager;
-import csv.CSVReader;
 import extractors.Extractor;
 import extractors.ExtractorFactory;
+import io.AppListReader;
+import io.CSVReader;
+import io.TxtReader;
 
 public class Run {
 
@@ -27,13 +29,20 @@ public class Run {
 	
 	public void run() throws Exception {
 		
-		CSVReader reader = new CSVReader(null);
+		AppListReader reader;
 		ConfigurationManager config = null;
 		try {
 			config = ConfigurationManager.getInstance();
 		} catch (IOException e) {
 			System.err.println("An error occurred while loading the configuration");
 		}
+		
+		if (config.getInputCsv().endsWith(".csv"))
+			reader = new CSVReader(null);
+		else if (config.getInputCsv().endsWith(".txt")) 
+			reader = new TxtReader(null);
+		else 
+			throw new RuntimeException("Invalid format for input file");
 		
 		Extractor extractor = null;
 		switch (this.runnerType) {

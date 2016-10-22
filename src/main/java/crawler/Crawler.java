@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import beans.Exportable;
-import csv.CSVWriter;
+import io.CSVWriter;
 
 public abstract class Crawler implements Runnable { 
 	
