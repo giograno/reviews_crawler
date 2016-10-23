@@ -26,9 +26,9 @@ public class ReviewExtractor extends Extractor {
 			ArrayList<String> aux = new ArrayList<>();
 			aux.add(currentApp);
 			Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, aux, "google");
+//			googlePlayStoreCrawler.run();
 			executor.execute(googlePlayStoreCrawler);
 		}
-		
 		executor.shutdown();
 	}
 

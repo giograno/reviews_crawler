@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import beans.Review;
 import io.CSVWriter;
+import utils.Utils;
 import utils.WebElements;
 
 import java.io.IOException;
@@ -34,9 +35,11 @@ public class PlayStoreCrawler extends Crawler {
 
 	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
 		this.appName = appName;
+		this.reviews = new ArrayList<>();
 
 		if (dateOfLastCrawl == null) {
 			System.out.println("Crawl all existing reviews of " + appName);
+			this.dateOfLastCrawl = Utils.getFakeOldDate();
 		} else {
 			System.out.println("Crawling all new reviews of " + appName + " since " + dateOfLastCrawl);
 			this.dateOfLastCrawl = dateOfLastCrawl;
@@ -45,23 +48,23 @@ public class PlayStoreCrawler extends Crawler {
 
 	@Override
 	public void run() {
-		driver = connectWithDriverOfLink(this.appName);
+		connectWithDriverOfLink(this.appName);
 		clickNextButton();
 		scrollPage(0, -250);
 		changeReviewSortOrderToNewest();
 		moveHoveSoItShowsReviewDate();
 
-		this.reviews = getReviewsByDriver();
+		getReviewsByDriver();
 
 		for (Review review : reviews) {
 			try {
-				System.out.println("Writing: " + review.getReviewText());
+//				System.out.println("Writing: " + review.getReviewText());
 				CSVWriter.writeline(review.getFieldsToExport());
 			} catch (IOException e) {
 				System.err.println("An error occurred during the export of a review");
 			}
 		}
-		
+		System.out.println("Writed " + reviews.size() + " for: " + this.appName);
 		this.driver.close();
 	}
 
@@ -69,14 +72,12 @@ public class PlayStoreCrawler extends Crawler {
 		return this.reviews;
 	}
 
-	private WebDriver connectWithDriverOfLink(String appName) {
+	private void connectWithDriverOfLink(String appName) {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
-		WebDriver driver = new FirefoxDriver();
+		this.driver = new FirefoxDriver();
 		driver.manage().window().maximize();
 		driver.navigate().to(appLink);
-
-		return driver;
 	}
 
 	private void clickNextButton() {
@@ -114,26 +115,29 @@ public class PlayStoreCrawler extends Crawler {
 		builder.moveToElement(hoverElement).perform();
 	}
 
-	private List<Review> getReviewsByDriver() {
-		List<Review> collectedReviews = new ArrayList<Review>();
+	private void getReviewsByDriver() {
 
-		while (nextButtonExists(driver) && !dateOfLastCrawlIsReached) {
+		boolean isTheLastPage = false;
+
+		while (!isTheLastPage && !dateOfLastCrawlIsReached) {
 			sleep(2500);
 			List<WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 
-			collectedReviews = reviewsSortedOutByDate(newReviewsAsWebElement, dateOfLastCrawl, collectedReviews);
-			clickNextButton();
+			this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl);	
+			
+			if (nextButtonExists())
+				clickNextButton();
+			if (this.isTheLastPage())
+				isTheLastPage = true;
 		}
-		return collectedReviews;
 	}
 
 	private List<WebElement> getAllReviewsOfCurrentPage() {
 		final String reviewClassName = "single-review";
-		return driver.findElements(By.className(reviewClassName));
+		return this.driver.findElements(By.className(reviewClassName));
 	}
 
-	private List<Review> reviewsSortedOutByDate(List<WebElement> crawledReviews, Date dateOfLastCrawl,
-			List<Review> sortedReviews) {
+	private void getReviewsOfThePage(List<WebElement> crawledReviews, Date dateOfLastCrawl) {
 
 		DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
 		Date date = null;
@@ -143,9 +147,9 @@ public class PlayStoreCrawler extends Crawler {
 			if (!review.getText().equals("")) {
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
+//				review.findElement(By.)
 
 				if (dateOfLastCrawl != null) {
-					// Parse date into Dateformat
 					try {
 						date = formatter.parse(dateAsText);
 					} catch (ParseException e) {
@@ -153,27 +157,42 @@ public class PlayStoreCrawler extends Crawler {
 					}
 					// add to List if newer than lastCrawl
 					if (date.after(dateOfLastCrawl)) {
-						Review newReview = new Review(this.appName, reviewText, date, 5);
-						sortedReviews.add(newReview);
-					} else {
+						Review newReview = new Review(this.appName, reviewText, date, this.getNumberOfStars(review));
+						this.reviews.add(newReview);
+					} else 
 						dateOfLastCrawlIsReached = true;
-						return sortedReviews;
-					}
-
 				}
 			}
 		}
-		return sortedReviews;
 	}
 
-	private boolean nextButtonExists(WebDriver driver) {
-		List<WebElement> arrowButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
+	private boolean nextButtonExists() {
+		List<WebElement> arrowButton = this.driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
+		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));
 
-		if (arrowButton.size() >= 1) {
+		if (arrowButton.size() >= 1 && hiddenButton.size() == 0) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	private boolean isTheLastPage() {
+		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));
+		if (hiddenButton.size() > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	private int getNumberOfStars(WebElement review) {
+		String stars = review.findElement(By.xpath(WebElements.STARS)).getAttribute("aria-label");
+		
+		for (int i = 1; i < 6; i ++) {
+			if (stars.contains(Integer.toString(i)))
+				return i;
+		}
+		return 0;
 	}
 
 	// TODO: change to 'presenceOfElementLocated', but not working

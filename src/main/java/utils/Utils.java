@@ -38,6 +38,16 @@ public class Utils {
 		return aux;
 	}
 	
+	public static Date getFakeOldDate() {
+		Date fakeDate = null;
+		try {
+			return formatter.parse("01/01/1990");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return fakeDate;
+	}
+	
 	/**
 	 * Returns a the current date as a <code>String</code> in the format dd/MM/yyyy
 	 * @return
