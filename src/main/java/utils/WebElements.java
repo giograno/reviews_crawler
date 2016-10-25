@@ -10,5 +10,6 @@ public class WebElements {
 	public static final String REQUIRE_SOFTWARE 		= "//div[contains(@itemprop, 'operatingSystem')]";
 	public static final String LAST_UPDATE 				= "//div[contains(@itemprop, 'datePublished')]";	
 	public static final String STARS					= "//div[@class='tiny-star star-rating-non-editable-container']";
+	public static final String SECTION_REVIEW      		= "//div[@class='details-section reviews']";
 
 }

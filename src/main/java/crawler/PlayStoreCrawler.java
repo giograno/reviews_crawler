@@ -49,7 +49,13 @@ public class PlayStoreCrawler extends Crawler {
 	@Override
 	public void run() {
 		connectWithDriverOfLink(this.appName);
-		clickNextButton();
+		if (this.areReviewsExpandable())
+			clickNextButton();
+		else {
+			System.out.println("It is no possibile to see the reviews for: " + this.appName);
+			this.driver.close();
+			return;
+		}
 		scrollPage(0, -250);
 		changeReviewSortOrderToNewest();
 		moveHoveSoItShowsReviewDate();
@@ -58,7 +64,7 @@ public class PlayStoreCrawler extends Crawler {
 
 		for (Review review : reviews) {
 			try {
-//				System.out.println("Writing: " + review.getReviewText());
+				// System.out.println("Writing: " + review.getReviewText());
 				CSVWriter.writeline(review.getFieldsToExport());
 			} catch (IOException e) {
 				System.err.println("An error occurred during the export of a review");
@@ -123,8 +129,8 @@ public class PlayStoreCrawler extends Crawler {
 			sleep(2500);
 			List<WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 
-			this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl);	
-			
+			this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl);
+
 			if (nextButtonExists())
 				clickNextButton();
 			if (this.isTheLastPage())
@@ -147,7 +153,7 @@ public class PlayStoreCrawler extends Crawler {
 			if (!review.getText().equals("")) {
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
-//				review.findElement(By.)
+				// review.findElement(By.)
 
 				if (dateOfLastCrawl != null) {
 					try {
@@ -159,7 +165,7 @@ public class PlayStoreCrawler extends Crawler {
 					if (date.after(dateOfLastCrawl)) {
 						Review newReview = new Review(this.appName, reviewText, date, this.getNumberOfStars(review));
 						this.reviews.add(newReview);
-					} else 
+					} else
 						dateOfLastCrawlIsReached = true;
 				}
 			}
@@ -184,11 +190,25 @@ public class PlayStoreCrawler extends Crawler {
 		else
 			return false;
 	}
-	
+
+	private boolean areReviewsExpandable() {
+		WebElement sectionReview;
+
+		if (this.driver.findElements(By.xpath(WebElements.SECTION_REVIEW)).size() >= 1) {
+			sectionReview = this.driver.findElement(By.xpath(WebElements.SECTION_REVIEW));
+			List<WebElement> arrowButton = sectionReview.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
+			if (arrowButton.size() > 1)
+				return true;
+			else
+				return false;
+		} else
+			return false;
+	}
+
 	private int getNumberOfStars(WebElement review) {
 		String stars = review.findElement(By.xpath(WebElements.STARS)).getAttribute("aria-label");
-		
-		for (int i = 1; i < 6; i ++) {
+
+		for (int i = 1; i < 6; i++) {
 			if (stars.contains(Integer.toString(i)))
 				return i;
 		}
