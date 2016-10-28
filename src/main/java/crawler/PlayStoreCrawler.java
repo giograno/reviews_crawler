@@ -126,7 +126,6 @@ public class PlayStoreCrawler extends Crawler {
 		boolean isTheLastPage = false;
 
 		while (!isTheLastPage && !dateOfLastCrawlIsReached) {
-			sleep(2500);
 			List<WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 
 			this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl);
@@ -140,7 +139,8 @@ public class PlayStoreCrawler extends Crawler {
 
 	private List<WebElement> getAllReviewsOfCurrentPage() {
 		final String reviewClassName = "single-review";
-		return this.driver.findElements(By.className(reviewClassName));
+		return new WebDriverWait(this.driver, 3).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className(reviewClassName)));
+//		return this.driver.findElements(By.className(reviewClassName));
 	}
 
 	private void getReviewsOfThePage(List<WebElement> crawledReviews, Date dateOfLastCrawl) {
@@ -213,14 +213,5 @@ public class PlayStoreCrawler extends Crawler {
 				return i;
 		}
 		return 0;
-	}
-
-	// TODO: change to 'presenceOfElementLocated', but not working
-	private void sleep(int milliseconds) {
-		try {
-			Thread.sleep(milliseconds);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 }
