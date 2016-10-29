@@ -29,13 +29,19 @@ public class PlayStoreCrawler extends Crawler {
 
 	private Date dateOfLastCrawl;
 	private String appName = null;
-	private WebDriver driver = null;
-	private WebDriverWait wait = null;
+	
+	private WebDriver driver;
+	private WebDriverWait wait;
+	
 	private List<Review> reviews;
 
 	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
 		this.appName = appName;
 		this.reviews = new ArrayList<>();
+		
+		// initialize the driver
+		this.driver = new FirefoxDriver();
+		this.wait = new WebDriverWait(this.driver, 10);
 
 		if (dateOfLastCrawl == null) {
 			System.out.println("Crawl all existing reviews of " + appName);
@@ -81,14 +87,12 @@ public class PlayStoreCrawler extends Crawler {
 	private void connectWithDriverOfLink(String appName) {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
-		this.driver = new FirefoxDriver();
 		driver.manage().window().maximize();
 		driver.navigate().to(appLink);
 	}
 
 	private void clickNextButton() {
 		// wait until next button could be clicked
-		this.wait = new WebDriverWait(driver, 10);
 		this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)));
 
 		WebElement nextButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)).get(1);
@@ -102,13 +106,11 @@ public class PlayStoreCrawler extends Crawler {
 
 	private void changeReviewSortOrderToNewest() {
 		// open sort order drop down menu
-		this.wait = new WebDriverWait(driver, 10);
 		WebElement sortOrderButton = driver.findElements(By.className("dropdown-menu")).get(0);
 		this.wait.until(ExpectedConditions.elementToBeClickable(sortOrderButton));
 		sortOrderButton.click();
 
 		// change order to 'Newest'
-		this.wait = new WebDriverWait(driver, 10);
 		WebElement newestOrderButton = driver.findElement(By.xpath("//button[contains(.,'Newest')]"));
 		this.wait.until(ExpectedConditions.elementToBeClickable(newestOrderButton));
 		newestOrderButton.click();
@@ -139,7 +141,7 @@ public class PlayStoreCrawler extends Crawler {
 
 	private List<WebElement> getAllReviewsOfCurrentPage() {
 		final String reviewClassName = "single-review";
-		return new WebDriverWait(this.driver, 3).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className(reviewClassName)));
+		return this.wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className(reviewClassName)));
 //		return this.driver.findElements(By.className(reviewClassName));
 	}
 
@@ -147,10 +149,11 @@ public class PlayStoreCrawler extends Crawler {
 
 		DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
 		Date date = null;
-
+		
 		for (WebElement review : crawledReviews) {
 			// sort out the empty strings
 			if (!review.getText().equals("")) {
+				System.out.println(review.getText());
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
 				// review.findElement(By.)
@@ -214,4 +217,5 @@ public class PlayStoreCrawler extends Crawler {
 		}
 		return 0;
 	}
+	
 }
