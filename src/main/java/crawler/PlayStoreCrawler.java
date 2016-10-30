@@ -38,16 +38,12 @@ public class PlayStoreCrawler extends Crawler {
 	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
 		this.appName = appName;
 		this.reviews = new ArrayList<>();
-		
-		// initialize the driver
-		this.driver = new FirefoxDriver();
-		this.wait = new WebDriverWait(this.driver, 10);
 
 		if (dateOfLastCrawl == null) {
-			System.out.println("Crawl all existing reviews of " + appName);
+//			System.out.println("Crawl all existing reviews of " + appName);
 			this.dateOfLastCrawl = Utils.getFakeOldDate();
 		} else {
-			System.out.println("Crawling all new reviews of " + appName + " since " + dateOfLastCrawl);
+//			System.out.println("Crawling all new reviews of " + appName + " since " + dateOfLastCrawl);
 			this.dateOfLastCrawl = dateOfLastCrawl;
 		}
 	}
@@ -70,7 +66,6 @@ public class PlayStoreCrawler extends Crawler {
 
 		for (Review review : reviews) {
 			try {
-				// System.out.println("Writing: " + review.getReviewText());
 				CSVWriter.writeline(review.getFieldsToExport());
 			} catch (IOException e) {
 				System.err.println("An error occurred during the export of a review");
@@ -94,6 +89,10 @@ public class PlayStoreCrawler extends Crawler {
 	private void clickNextButton() {
 		// wait until next button could be clicked
 		this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)));
+		
+		// initialize the driver
+		this.driver = new FirefoxDriver();
+		this.wait = new WebDriverWait(this.driver, 10);
 
 		WebElement nextButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)).get(1);
 		nextButton.click();
