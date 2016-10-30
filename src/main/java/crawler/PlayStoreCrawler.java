@@ -4,8 +4,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -50,6 +55,8 @@ public class PlayStoreCrawler extends Crawler {
 
 	@Override
 	public void run() {
+		System.out.println("*------------------------------------------------------*");
+		System.out.println("Running on app: " + this.appName);
 		connectWithDriverOfLink(this.appName);
 		if (this.areReviewsExpandable())
 			clickNextButton();
@@ -81,18 +88,19 @@ public class PlayStoreCrawler extends Crawler {
 
 	private void connectWithDriverOfLink(String appName) {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
-
-		driver.manage().window().maximize();
-		driver.navigate().to(appLink);
-	}
-
-	private void clickNextButton() {
-		// wait until next button could be clicked
-		this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)));
 		
 		// initialize the driver
 		this.driver = new FirefoxDriver();
 		this.wait = new WebDriverWait(this.driver, 10);
+
+		driver.manage().window().maximize();
+		driver.navigate().to(appLink);
+	}
+	
+	private void clickNextButton() {
+		// wait until next button could be clicked
+		this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)));
+	
 
 		WebElement nextButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)).get(1);
 		nextButton.click();
@@ -152,7 +160,6 @@ public class PlayStoreCrawler extends Crawler {
 		for (WebElement review : crawledReviews) {
 			// sort out the empty strings
 			if (!review.getText().equals("")) {
-				System.out.println(review.getText());
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
 				// review.findElement(By.)
