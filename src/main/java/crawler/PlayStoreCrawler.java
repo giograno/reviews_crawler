@@ -1,24 +1,5 @@
 package crawler;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.safari.SafariOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import beans.Review;
-import io.CSVWriter;
-import utils.Utils;
-import utils.WebElements;
-
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,12 +9,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import beans.Review;
+import io.CSVWriter;
+import utils.Utils;
+import utils.WebElements;
+
 public class PlayStoreCrawler extends Crawler {
 
 	private boolean dateOfLastCrawlIsReached = false;
 
 	private Date dateOfLastCrawl;
 	private String appName = null;
+	private final String gecko = "/Users/giograno/Documents/Zurich_PhD/work_zurich/reviewCrawler/geckodriver";
 	
 	private WebDriver driver;
 	private WebDriverWait wait;
@@ -78,6 +75,8 @@ public class PlayStoreCrawler extends Crawler {
 				System.err.println("An error occurred during the export of a review");
 			}
 		}
+		if (reviews.size() > 0) 
+			CSVWriter.writeSuccess(this.appName);
 		System.out.println("Writed " + reviews.size() + " for: " + this.appName);
 		this.driver.close();
 	}
@@ -90,7 +89,11 @@ public class PlayStoreCrawler extends Crawler {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 		
 		// initialize the driver
-		this.driver = new FirefoxDriver();
+//		this.driver = new FirefoxDriver();
+		System.setProperty("webdriver.gecko.driver", this.gecko);
+		DesiredCapabilities capabilities=DesiredCapabilities.firefox();
+	    capabilities.setCapability("marionette", true);
+		this.driver = new FirefoxDriver(capabilities);
 		this.wait = new WebDriverWait(this.driver, 10);
 
 		driver.manage().window().maximize();
@@ -130,10 +133,17 @@ public class PlayStoreCrawler extends Crawler {
 		builder.moveToElement(hoverElement).perform();
 	}
 
+	//TODO sleep to avoid stale element (fix it)
 	private void getReviewsByDriver() {
 
 		boolean isTheLastPage = false;
 
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		while (!isTheLastPage && !dateOfLastCrawlIsReached) {
 			List<WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 

@@ -15,10 +15,12 @@ public class CSVWriter {
 
 	private static FileWriter writer = null;
 	private static final char DEFAULT_SEPARATOR = ',';
+	private static FileWriter appSuccss;
 	
 	static {
 		try {
 			writer = new FileWriter(ConfigurationManager.getInstance().getOutputCsv());
+			appSuccss = new FileWriter("app_extracted.txt");
 		} catch (IOException e) {
 			System.err.println("An error occurred while reading the input csv");
 		}
@@ -56,6 +58,15 @@ public class CSVWriter {
 		builder.append("\n");
 		writer.append(builder.toString());
 		writer.flush();
+	}
+	
+	public synchronized static void writeSuccess(String app) {
+		try {
+			appSuccss.append(app);
+			appSuccss.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
     private synchronized static String followCVSformat(String value) {
