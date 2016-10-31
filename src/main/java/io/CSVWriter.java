@@ -16,6 +16,7 @@ public class CSVWriter {
 	private static FileWriter writer = null;
 	private static final char DEFAULT_SEPARATOR = ',';
 	private static FileWriter appSuccss;
+	private static int counter = 0;
 	
 	static {
 		try {
@@ -61,8 +62,9 @@ public class CSVWriter {
 	}
 	
 	public synchronized static void writeSuccess(String app) {
+		counter++;
 		try {
-			appSuccss.append(app);
+			appSuccss.append(Integer.toString(counter) + ":" + app + "\n");
 			appSuccss.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

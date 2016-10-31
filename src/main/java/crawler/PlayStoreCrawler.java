@@ -89,11 +89,11 @@ public class PlayStoreCrawler extends Crawler {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 		
 		// initialize the driver
-//		this.driver = new FirefoxDriver();
-		System.setProperty("webdriver.gecko.driver", this.gecko);
-		DesiredCapabilities capabilities=DesiredCapabilities.firefox();
-	    capabilities.setCapability("marionette", true);
-		this.driver = new FirefoxDriver(capabilities);
+		this.driver = new FirefoxDriver();
+//		System.setProperty("webdriver.gecko.driver", this.gecko);
+//		DesiredCapabilities capabilities=DesiredCapabilities.firefox();
+//	    capabilities.setCapability("marionette", true);
+//		this.driver = new FirefoxDriver(capabilities);
 		this.wait = new WebDriverWait(this.driver, 10);
 
 		driver.manage().window().maximize();
@@ -120,6 +120,15 @@ public class PlayStoreCrawler extends Crawler {
 		this.wait.until(ExpectedConditions.elementToBeClickable(sortOrderButton));
 		sortOrderButton.click();
 
+		
+		//trying to avoid the error
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// change order to 'Newest'
 		WebElement newestOrderButton = driver.findElement(By.xpath("//button[contains(.,'Newest')]"));
 		this.wait.until(ExpectedConditions.elementToBeClickable(newestOrderButton));
@@ -139,7 +148,7 @@ public class PlayStoreCrawler extends Crawler {
 		boolean isTheLastPage = false;
 
 		try {
-			Thread.sleep(2500);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
