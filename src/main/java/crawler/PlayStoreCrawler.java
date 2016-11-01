@@ -15,7 +15,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -30,11 +29,11 @@ public class PlayStoreCrawler extends Crawler {
 
 	private Date dateOfLastCrawl;
 	private String appName = null;
-	private final String gecko = "/Users/giograno/Documents/Zurich_PhD/work_zurich/reviewCrawler/geckodriver";
+//	private final String gecko = "/Users/giograno/Documents/Zurich_PhD/work_zurich/reviewCrawler/geckodriver";
 	
 	private WebDriver driver;
 	private WebDriverWait wait;
-	
+		
 	private List<Review> reviews;
 
 	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
@@ -150,18 +149,36 @@ public class PlayStoreCrawler extends Crawler {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int indexToStart 	= 0;
+		int maximumReviews 	= 0;
+		boolean mine      	= true;
+		
+		List<WebElement> newReviewsAsWebElement = null;
+		
 		while (!isTheLastPage && !dateOfLastCrawlIsReached) {
-			List<WebElement> newReviewsAsWebElement = getAllReviewsOfCurrentPage();
+			//TODO implement smarter handling of review paginating
+			
+			if (mine) {
+				newReviewsAsWebElement = getAllReviewsOfCurrentPage();
+				maximumReviews = newReviewsAsWebElement.size();
+			}
+			
+			indexToStart = this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl, indexToStart, maximumReviews);
+			
+			if (indexToStart == maximumReviews)
+				mine = true;
+			else 
+				mine = false;
 
-			this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl);
-
-			if (nextButtonExists())
-				clickNextButton();
-			if (this.isTheLastPage())
+			if (this.isTheLastPage()) {
 				isTheLastPage = true;
+				continue;
+			}
+			if (areReviewsExpandable())
+				clickNextButton();
 		}
 	}
 
@@ -171,18 +188,22 @@ public class PlayStoreCrawler extends Crawler {
 //		return this.driver.findElements(By.className(reviewClassName));
 	}
 
-	private void getReviewsOfThePage(List<WebElement> crawledReviews, Date dateOfLastCrawl) {
+	private int getReviewsOfThePage(List<WebElement> crawledReviews, Date dateOfLastCrawl, int indexToStart, int maximumReviews) {
 
 		DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
 		Date date = null;
-		
-		for (WebElement review : crawledReviews) {
-			// sort out the empty strings
+				
+		for (; indexToStart < maximumReviews; indexToStart++) {
+			WebElement review = crawledReviews.get(indexToStart);
+				
 			if (!review.getText().equals("")) {
+				
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
-				// review.findElement(By.)
 
+				if (reviewText.equals("Swift Easy and fast"))
+					System.out.println("here");
+				
 				if (dateOfLastCrawl != null) {
 					try {
 						date = formatter.parse(dateAsText);
@@ -196,8 +217,35 @@ public class PlayStoreCrawler extends Crawler {
 					} else
 						dateOfLastCrawlIsReached = true;
 				}
-			}
+			} else 
+				break;
 		}
+		
+		return indexToStart;
+		
+//		for (WebElement review : crawledReviews) {
+//			// sort out the empty strings
+//			if (!review.getText().equals("")) {
+//				fill++;
+//				String dateAsText = review.findElement(By.className("review-date")).getText();
+//				String reviewText = review.findElement(By.className("review-body")).getText();
+//				// review.findElement(By.)
+//
+//				if (dateOfLastCrawl != null) {
+//					try {
+//						date = formatter.parse(dateAsText);
+//					} catch (ParseException e) {
+//						e.printStackTrace();
+//					}
+//					// add to List if newer than lastCrawl
+//					if (date.after(dateOfLastCrawl)) {
+//						Review newReview = new Review(this.appName, reviewText, date, this.getNumberOfStars(review));
+//						this.reviews.add(newReview);
+//					} else
+//						dateOfLastCrawlIsReached = true;
+//				}
+//			} 
+//		}	
 	}
 
 	private boolean nextButtonExists() {
