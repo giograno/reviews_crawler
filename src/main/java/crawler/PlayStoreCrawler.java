@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -91,11 +92,13 @@ public class PlayStoreCrawler extends Crawler {
 
 		// initialize the driver
 		this.driver = new FirefoxDriver();
+		// set a long timeout before the alert for unresponsive script
+		this.driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		// System.setProperty("webdriver.gecko.driver", this.gecko);
 		// DesiredCapabilities capabilities=DesiredCapabilities.firefox();
 		// capabilities.setCapability("marionette", true);
 		// this.driver = new FirefoxDriver(capabilities);
-		this.wait = new WebDriverWait(this.driver, 10);
+		this.wait = new WebDriverWait(this.driver, 30);
 
 		driver.manage().window().maximize();
 		driver.navigate().to(appLink);
