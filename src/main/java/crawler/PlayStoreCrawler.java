@@ -94,8 +94,8 @@ public class PlayStoreCrawler extends Crawler {
 		// initialize the driver
 		
 	    FirefoxProfile profile = new FirefoxProfile();
-	    profile.setPreference("dom.max_chrome_script_run_time", 0);
-	    profile.setPreference("dom.max_script_run_time", 0);
+	    profile.setPreference("dom.max_chrome_script_run_time", 120);
+	    profile.setPreference("dom.max_script_run_time", 120);
 	    this.driver = new FirefoxDriver(profile);
 
 		this.driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
