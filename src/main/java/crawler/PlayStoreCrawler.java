@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -92,11 +93,11 @@ public class PlayStoreCrawler extends Crawler {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
 		// initialize the driver
-		
-	    FirefoxProfile profile = new FirefoxProfile();
-	    profile.setPreference("dom.max_chrome_script_run_time", 120);
-	    profile.setPreference("dom.max_script_run_time", 120);
-	    this.driver = new FirefoxDriver(profile);
+
+		FirefoxProfile profile = new FirefoxProfile();
+		profile.setPreference("dom.max_chrome_script_run_time", 120);
+		profile.setPreference("dom.max_script_run_time", 120);
+		this.driver = new FirefoxDriver(profile);
 
 		this.driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		// System.setProperty("webdriver.gecko.driver", this.gecko);
@@ -166,27 +167,31 @@ public class PlayStoreCrawler extends Crawler {
 
 		List<WebElement> newReviewsAsWebElement = null;
 
-		while (!isTheLastPage && !dateOfLastCrawlIsReached) {
-			// TODO implement smarter handling of review paginating
+		try {
+			while (!isTheLastPage && !dateOfLastCrawlIsReached) {
+				// TODO implement smarter handling of review paginating
 
-			if (mine) {
-				newReviewsAsWebElement = getAllReviewsOfCurrentPage();
-				maximumReviews = newReviewsAsWebElement.size();
+				if (mine) {
+					newReviewsAsWebElement = getAllReviewsOfCurrentPage();
+					maximumReviews = newReviewsAsWebElement.size();
+				}
+
+				indexToStart = this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl, indexToStart,
+						maximumReviews);
+
+				if (indexToStart == maximumReviews)
+					mine = true;
+				else
+					mine = false;
+
+				if (this.isTheLastPage()) {
+					isTheLastPage = true;
+					continue;
+				} else
+					clickNextButton();
 			}
-
-			indexToStart = this.getReviewsOfThePage(newReviewsAsWebElement, dateOfLastCrawl, indexToStart,
-					maximumReviews);
-
-			if (indexToStart == maximumReviews)
-				mine = true;
-			else
-				mine = false;
-
-			if (this.isTheLastPage()) {
-				isTheLastPage = true;
-				continue;
-			} else 
-				clickNextButton();
+		} catch (UnhandledAlertException e) {
+			this.driver.switchTo().alert().accept();
 		}
 	}
 
@@ -260,16 +265,16 @@ public class PlayStoreCrawler extends Crawler {
 		// }
 	}
 
-	private boolean nextButtonExists() {
-		List<WebElement> arrowButton = this.driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
-		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));
-
-		if (arrowButton.size() >= 1 && hiddenButton.size() == 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+//	private boolean nextButtonExists() {
+//		List<WebElement> arrowButton = this.driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
+//		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));
+//
+//		if (arrowButton.size() >= 1 && hiddenButton.size() == 0) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
 	private boolean isTheLastPage() {
 		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));
