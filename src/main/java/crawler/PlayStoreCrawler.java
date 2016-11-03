@@ -15,6 +15,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -91,8 +92,12 @@ public class PlayStoreCrawler extends Crawler {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
 		// initialize the driver
-		this.driver = new FirefoxDriver();
-		// set a long timeout before the alert for unresponsive script
+		
+	    FirefoxProfile profile = new FirefoxProfile();
+	    profile.setPreference("dom.max_chrome_script_run_time", 0);
+	    profile.setPreference("dom.max_script_run_time", 0);
+	    this.driver = new FirefoxDriver(profile);
+
 		this.driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		// System.setProperty("webdriver.gecko.driver", this.gecko);
 		// DesiredCapabilities capabilities=DesiredCapabilities.firefox();
