@@ -60,6 +60,7 @@ public class PlayStoreCrawler extends Crawler {
 			clickNextButton();
 		else {
 			System.out.println("It is no possibile to see the reviews for: " + this.appName);
+			CSVWriter.writeSuccess(this.appName);
 			this.driver.close();
 			return;
 		}
