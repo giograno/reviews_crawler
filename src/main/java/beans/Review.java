@@ -49,4 +49,11 @@ public class Review implements Exportable {
 		fields.add(String.valueOf(this.numberOfStars));
 		return fields;
 	}
+
+	@Override
+	public String toString() {
+		return this.appName + "=" + this.reviewText;
+	}
+	
+	
 }

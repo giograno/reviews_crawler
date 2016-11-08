@@ -12,13 +12,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -33,14 +35,12 @@ public class PlayStoreCrawler extends Crawler {
 
 	private Date dateOfLastCrawl;
 	private String appName = null;
-	// private final String gecko =
-	// "/Users/giograno/Documents/Zurich_PhD/work_zurich/reviewCrawler/geckodriver";
 
 	private WebDriver driver;
 	private WebDriverWait wait;
 
 	private List<Review> reviews;
-
+	
 	public PlayStoreCrawler(String appName, Date dateOfLastCrawl) {
 		this.appName = appName;
 		this.reviews = new ArrayList<>();
@@ -78,10 +78,10 @@ public class PlayStoreCrawler extends Crawler {
 				System.err.println("An error occurred during the export of a review");
 			}
 		}
-		if (reviews.size() > 0)
+		if (reviews.size() > 0) 
 			CSVWriter.writeSuccess(this.appName);
 		System.out.println("Writed " + reviews.size() + " for: " + this.appName);
-		this.driver.close();
+		this.driver.quit();
 	}
 
 	public List<Review> getReviews() {
@@ -91,12 +91,11 @@ public class PlayStoreCrawler extends Crawler {
 	private void connectWithDriverOfLink(String appName) {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
-		// initialize the driver
-
-		FirefoxProfile profile = new FirefoxProfile();
-		profile.setPreference("dom.max_chrome_script_run_time", 120);
-		profile.setPreference("dom.max_script_run_time", 120);
-		this.driver = new FirefoxDriver(profile);
+		Capabilities caps = new DesiredCapabilities();
+		((DesiredCapabilities) caps).setJavascriptEnabled(true);
+		((DesiredCapabilities) caps).setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
+				"phantomjs");
+		this.driver = new PhantomJSDriver(caps);
 
 		this.driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		this.wait = new WebDriverWait(this.driver, 30);
@@ -163,7 +162,6 @@ public class PlayStoreCrawler extends Crawler {
 
 		try {
 			while (!isTheLastPage && !dateOfLastCrawlIsReached) {
-				// TODO implement smarter handling of review paginating
 
 				if (mine) {
 					newReviewsAsWebElement = getAllReviewsOfCurrentPage();
@@ -188,7 +186,7 @@ public class PlayStoreCrawler extends Crawler {
 			Alert alert = this.wait.until(ExpectedConditions.alertIsPresent());
 			if (alert != null)
 				this.driver.switchTo().alert().accept();
-			else 
+			else
 				System.err.println("Unable to intercept alert");
 		}
 	}
@@ -205,6 +203,13 @@ public class PlayStoreCrawler extends Crawler {
 		DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
 		Date date = null;
 
+		//TODO needed to update the date
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		for (; indexToStart < maximumReviews; indexToStart++) {
 			WebElement review = crawledReviews.get(indexToStart);
 
@@ -213,11 +218,10 @@ public class PlayStoreCrawler extends Crawler {
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
 
-				if (reviewText.equals("Swift Easy and fast"))
-					System.out.println("here");
-
 				if (dateOfLastCrawl != null) {
 					try {
+						if (dateAsText.equals(""))
+							System.err.println("Wait just a second");
 						date = formatter.parse(dateAsText);
 					} catch (ParseException e) {
 						e.printStackTrace();
@@ -234,45 +238,7 @@ public class PlayStoreCrawler extends Crawler {
 		}
 
 		return indexToStart;
-
-		// for (WebElement review : crawledReviews) {
-		// // sort out the empty strings
-		// if (!review.getText().equals("")) {
-		// fill++;
-		// String dateAsText =
-		// review.findElement(By.className("review-date")).getText();
-		// String reviewText =
-		// review.findElement(By.className("review-body")).getText();
-		// // review.findElement(By.)
-		//
-		// if (dateOfLastCrawl != null) {
-		// try {
-		// date = formatter.parse(dateAsText);
-		// } catch (ParseException e) {
-		// e.printStackTrace();
-		// }
-		// // add to List if newer than lastCrawl
-		// if (date.after(dateOfLastCrawl)) {
-		// Review newReview = new Review(this.appName, reviewText, date,
-		// this.getNumberOfStars(review));
-		// this.reviews.add(newReview);
-		// } else
-		// dateOfLastCrawlIsReached = true;
-		// }
-		// }
-		// }
 	}
-
-//	private boolean nextButtonExists() {
-//		List<WebElement> arrowButton = this.driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON));
-//		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));
-//
-//		if (arrowButton.size() >= 1 && hiddenButton.size() == 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
 
 	private boolean isTheLastPage() {
 		List<WebElement> hiddenButton = this.driver.findElements(By.xpath(WebElements.END_REVIEWS_BUTTON));

@@ -58,11 +58,11 @@ public class Run {
 		extractor.printNumberOfInputApps();
 		extractor.extract();
 		
-		try {
-			ConfigurationManager.getInstance().updateDateOfLastCrawl();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
+//		try {
+//			ConfigurationManager.getInstance().updateDateOfLastCrawl();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}	
 	}
 
 	public void interpret(String arg) {
