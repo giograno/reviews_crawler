@@ -45,11 +45,8 @@ public class PlayStoreCrawler extends Crawler {
 		this.reviews = new ArrayList<>();
 
 		if (dateOfLastCrawl == null) {
-			// System.out.println("Crawl all existing reviews of " + appName);
 			this.dateOfLastCrawl = Utils.getFakeOldDate();
 		} else {
-			// System.out.println("Crawling all new reviews of " + appName + "
-			// since " + dateOfLastCrawl);
 			this.dateOfLastCrawl = dateOfLastCrawl;
 		}
 	}
@@ -100,10 +97,6 @@ public class PlayStoreCrawler extends Crawler {
 		this.driver = new FirefoxDriver(profile);
 
 		this.driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
-		// System.setProperty("webdriver.gecko.driver", this.gecko);
-		// DesiredCapabilities capabilities=DesiredCapabilities.firefox();
-		// capabilities.setCapability("marionette", true);
-		// this.driver = new FirefoxDriver(capabilities);
 		this.wait = new WebDriverWait(this.driver, 30);
 
 		driver.manage().window().maximize();
@@ -133,7 +126,6 @@ public class PlayStoreCrawler extends Crawler {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
