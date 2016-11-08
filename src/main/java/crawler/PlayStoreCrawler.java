@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.UnhandledAlertException;
@@ -184,7 +185,11 @@ public class PlayStoreCrawler extends Crawler {
 					clickNextButton();
 			}
 		} catch (UnhandledAlertException e) {
-			this.driver.switchTo().alert().accept();
+			Alert alert = this.wait.until(ExpectedConditions.alertIsPresent());
+			if (alert != null)
+				this.driver.switchTo().alert().accept();
+			else 
+				System.err.println("Unable to intercept alert");
 		}
 	}
 
