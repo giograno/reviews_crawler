@@ -7,6 +7,11 @@ import java.io.IOException;
 
 import config.ConfigurationManager;
 
+/**
+ * Reads the csv input file and extracts the input files
+ * @author grano
+ *
+ */
 public class CSVReader extends AppListReader {
 
 	public CSVReader(String spliBy) {

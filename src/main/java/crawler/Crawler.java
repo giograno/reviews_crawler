@@ -1,22 +1,27 @@
 package crawler;
 
-import java.io.IOException;
-import java.util.List;
-
-import beans.Exportable;
-import io.CSVWriter;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 
 public abstract class Crawler implements Runnable { 
 	
-	/**
-	 * Write an <code>Exportable</code> class fields as a CSV line
-	 * @param exportable
-	 * @throws IOException
-	 */
-	public void writeLine(Exportable exportable) throws IOException {
-		List<String> toWrite = exportable.getFieldsToExport();
-		CSVWriter.writeline(toWrite);
-	}
+	protected WebDriver driver;
 	
+	/**
+	 * Checks if a element is present
+	 * 
+	 * @param by
+	 *            the <WebElement> to check
+	 * @return true or false
+	 */
+	public synchronized boolean isElementPresent(By by) {
+		try {
+			this.driver.findElement(by);
+			return true;
+		} catch (NoSuchElementException exception) {
+			return false;
+		}
+	}
 }
 

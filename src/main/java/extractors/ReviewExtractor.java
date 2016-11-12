@@ -21,7 +21,7 @@ public class ReviewExtractor extends Extractor {
 	public void extract() {
 
 		ExecutorService executor = Executors.newFixedThreadPool(this.configurationManager.getNumberOfThreadToUse());
-	
+		
 		for (String currentApp : appsToMine) {
 			ArrayList<String> aux = new ArrayList<>();
 			aux.add(currentApp);
@@ -30,6 +30,7 @@ public class ReviewExtractor extends Extractor {
 			executor.execute(googlePlayStoreCrawler);
 		}
 		executor.shutdown();
+		
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import config.ConfigurationManager;
 
+@Deprecated
 public class TxtReader extends AppListReader {
 
 	public TxtReader(String splitBy) {

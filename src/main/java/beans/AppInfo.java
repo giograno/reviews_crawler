@@ -14,7 +14,16 @@ public class AppInfo implements Exportable {
 	private String appName;
 	private String lastUpdate;
 	private String currentVersion;
+	private String category;
+	
+	public String getCategory() {
+		return category;
+	}
 
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
 	public String getLastUpdate() {
 		return lastUpdate;
 	}
@@ -43,6 +52,7 @@ public class AppInfo implements Exportable {
 	public List<String> getFieldsToExport() {
 		List<String> fields = new ArrayList<String>();
 		fields.add(appName);
+		fields.add(category);
 		fields.add(currentVersion);
 		fields.add(lastUpdate);
 		return fields;

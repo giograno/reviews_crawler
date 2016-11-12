@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 import config.ConfigurationManager;
 import extractors.Extractor;
 import extractors.ExtractorFactory;
@@ -7,6 +5,7 @@ import io.AppListReader;
 import io.CSVReader;
 import io.TxtReader;
 
+@SuppressWarnings("deprecation")
 public class Run {
 
 	private static final int RUNNER_REVIEW = 0;
@@ -30,12 +29,7 @@ public class Run {
 	public void run() throws Exception {
 		
 		AppListReader reader;
-		ConfigurationManager config = null;
-		try {
-			config = ConfigurationManager.getInstance();
-		} catch (IOException e) {
-			System.err.println("An error occurred while loading the configuration");
-		}
+		ConfigurationManager config = ConfigurationManager.getInstance();
 		
 		if (config.getInputCsv().endsWith(".csv"))
 			reader = new CSVReader(null);
@@ -57,12 +51,6 @@ public class Run {
 		}
 		extractor.printNumberOfInputApps();
 		extractor.extract();
-		
-//		try {
-//			ConfigurationManager.getInstance().updateDateOfLastCrawl();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}	
 	}
 
 	public void interpret(String arg) {
@@ -83,6 +71,5 @@ public class Run {
 				throw new IllegalArgumentException(
 						"Illegal run type '" + value);
 		}
-
 	}
 }

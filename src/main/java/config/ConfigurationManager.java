@@ -1,6 +1,5 @@
 package config;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,10 +46,11 @@ public class ConfigurationManager {
 	
 	/**
 	 * Returns an instance of the configuration manager. Call <code>setFilename</code> before this method.
-	 * @return Instance of the manager
-	 * @throws IOException If there is an error opening the file
+	 * @return	the instance of <ConfigurationManager>
 	 */
-	public static ConfigurationManager getInstance() throws IOException {
+	public static ConfigurationManager getInstance() {
+		
+		try {
 		if (instance == null || !instance.myFilename.equals(filename)) {
 			if (!filename.startsWith(STATIC_CONTENT))
 				instance = new ConfigurationManager(filename);
@@ -59,7 +59,9 @@ public class ConfigurationManager {
 				instance.directLoadContent(filename, content);
 			}
 		}
-		
+		} catch (IOException exception) {
+			System.err.println("A problem occurred with the Configuration Manager");
+		}
 		return instance;
 	}
 	
@@ -83,7 +85,7 @@ public class ConfigurationManager {
 	
 	/**
 	 * Returns the store to mine
-	 * @return
+	 * @return	 the store
 	 */
 	public String getStoreToCrawl() {
 		return this.properties.getProperty("store", "google");
@@ -91,18 +93,18 @@ public class ConfigurationManager {
 	
 	/**
 	 * Returns the filename of the input CSV file
-	 * @return
+	 * @return	the name of the input file
 	 */
 	public String getInputCsv() {
-		return this.properties.getProperty("input.csv", "");
+		return this.properties.getProperty("input_file", "");
 	}
 	
 	/**
 	 * Returns the filename of the output CSV file
-	 * @return
+	 * @return	the name of the output file
 	 */
 	public String getOutputCsv() {
-		return this.properties.getProperty("reviews.output.csv", "reviews.csv");
+		return this.properties.getProperty("output_file", "output.csv");
 	}
 	
 	/**
@@ -118,6 +120,39 @@ public class ConfigurationManager {
 	}
 	
 	/**
+	 * Returns the starting date for the review crawling
+	 * @return	the starting date or a null value if not specified
+	 */
+	public Date getStartingDate() {
+		String auxDate = this.properties.getProperty("from", "");
+		if (auxDate.equals(""))
+			return null;
+		else 
+			return Utils.getDateFromString(auxDate);
+	}
+	
+	/**
+	 * Returns the ending date for the review crawling
+	 * @return	the ending date or a null value if not specified
+	 */
+	public Date getEndDate() {
+		String auxDate = this.properties.getProperty("to", "");
+		if (auxDate.equals(""))
+			return null;
+		else 
+			return Utils.getDateFromString(auxDate);
+	}
+	
+	/**
+	 * Returns the maximum of reviews to be extracted for a given app
+	 * @return	a value of 1000 if not specified
+	 */
+	public int getLimit() {
+		String aux = this.properties.getProperty("limit", "1000");
+		return Integer.parseInt(aux);
+	}
+	
+	/**
 	 * Updates the date of last crawl in the 
 	 * @throws Exception 
 	 */
@@ -128,26 +163,33 @@ public class ConfigurationManager {
 	
 	/**
 	 * Returns the number of thread used by the tool
-	 * @return
+	 * @return	the number of threads to use
 	 */
 	public int getNumberOfThreadToUse() {
 		return Integer.parseInt(this.properties.getProperty("thread", "1"))	;
 	}
 	
 	/**
-	 * Returns the <code>File</code> for the web driver used for Chrome
-	 * @return
+	 * Returns the path for the PhantomJS Driver
+	 * @return	the path of the driver
 	 */
-	public File getWebDriver() {
-		return new File(this.properties.getProperty("webdriver"));
+	public String getPathForPhantomJSDriver() {
+		return this.properties.getProperty("phantomJS_path", "phantomjs");
 	}
 	
 	/**
-	 * Returns the browser choice 
-	 * @return
+	 * Returns the chosen reviews order
+	 * @return	the order
 	 */
-	public String getBrowserChoice() {
-		return this.properties.getProperty("browser", "firefox");
+	public String getReviewsOrder() {
+		return this.properties.getProperty("get_reviews_for", "newest");
 	}
 	
+	/**
+	 * Returns the chosen kind of file saving (mongodb or file)
+	 * @return	the choice
+	 */
+	public String getHowToStore() {
+		return this.properties.getProperty("export_to", "file");
+	}
 }
