@@ -14,7 +14,7 @@ public class CrawlerFactory {
 	public static Crawler getCrawler(ConfigurationManager config, ArrayList<String> appToMine, String whichCrawler) {
 		
 		if (whichCrawler.equalsIgnoreCase(PLAY_STORE))
-			return new GoogleReviewsDriver(appToMine.get(0), config);
+			return new GoogleReviewsCrawler(appToMine.get(0), config);
 		else if (whichCrawler.equalsIgnoreCase(GOOGLE_INFO))
 			return new GoogleInfoCrawler(appToMine);
 		else 

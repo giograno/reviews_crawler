@@ -27,7 +27,7 @@ import utils.ConfigurationException;
 import utils.Utils;
 import utils.WebElements;
 
-public class GoogleReviewsDriver extends Crawler {
+public class GoogleReviewsCrawler extends Crawler {
 
 	private boolean endingDateReached = false;
 	private ConfigurationManager configuration;
@@ -40,7 +40,7 @@ public class GoogleReviewsDriver extends Crawler {
 	private int reviewsCounter;
 	private IWriter writer;
 	
-	public GoogleReviewsDriver(String appName, ConfigurationManager configuration) {
+	public GoogleReviewsCrawler(String appName, ConfigurationManager configuration) {
 		this.appName 		= appName;
 		this.configuration 	= configuration;
 	}
@@ -83,8 +83,8 @@ public class GoogleReviewsDriver extends Crawler {
 		this.reviewsCounter = 0;
 		this.startingDate 	= configuration.getStartingDate() == null ? 
 				null : configuration.getStartingDate();
-		this.endingDate 	= configuration.getStartingDate() == null ? 
-				Utils.getFakeOldDate() : configuration.getStartingDate();
+		this.endingDate 	= configuration.getEndDate() == null ? 
+				Utils.getFakeOldDate() : configuration.getEndDate();
 		this.limit 			= configuration.getLimit();
 
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
