@@ -27,7 +27,9 @@ public class Utils {
         try {
             date = formatter.parse(dateToParse);
         } catch (ParseException e) {
-            e.printStackTrace();
+        	System.err.println("WTF there is a problem in date conversion;"
+        			+ "\nTrying to convert " + dateToParse);
+        	e.printStackTrace();
         }
         
         return date;

@@ -253,7 +253,8 @@ public class GoogleReviewsCrawler extends Crawler {
 	 * @return the number of stars
 	 */
 	private int getNumberOfStars(WebElement review) {
-		String stars = review.findElement(By.xpath(WebElements.STARS)).getAttribute("aria-label").replaceAll("[^0-9]+", " ");
+		String stars = review.findElement(By.xpath(WebElements.STARS)).getAttribute("aria-label");
+		stars = stars.replaceAll("[^0-9]+", " ");
 		return Integer.parseInt(Arrays.asList(stars.trim().split(" ")).get(0));
 	}
 

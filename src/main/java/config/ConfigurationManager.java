@@ -106,19 +106,7 @@ public class ConfigurationManager {
 	public String getOutputCsv() {
 		return this.properties.getProperty("output_file", "output.csv");
 	}
-	
-	/**
-	 * Returns the date of last crawl
-	 * @return
-	 */
-	public Date getDateOfLastCrawl() {
-		String auxDate = this.properties.getProperty("lastCrawl", "");
-		if (auxDate.equals(""))
-			return null;
-		else 
-			return Utils.getDateFromString(auxDate);
-	}
-	
+		
 	/**
 	 * Returns the starting date for the review crawling
 	 * @return	the starting date or a null value if not specified

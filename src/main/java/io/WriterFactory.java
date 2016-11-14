@@ -10,7 +10,7 @@ public class WriterFactory {
 		String howToSave = configuration.getHowToStore();
 		
 		if (howToSave.equals("file"))
-			return new CSVWriter(configuration);
+			return new CSVWriter();
 		else if (howToSave.equals("mongodb"))
 			return null;
 		else

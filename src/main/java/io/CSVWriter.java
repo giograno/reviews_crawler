@@ -15,19 +15,18 @@ import config.ConfigurationManager;
  */
 public class CSVWriter implements IWriter {
 
-	private FileWriter writer = null;
+	private static FileWriter writer = null;
 	private static final char DEFAULT_SEPARATOR = ',';
-	private FileWriter appSuccss;
+	private static FileWriter appSuccss;
 	private static int counter = 0;
-	private ConfigurationManager configuration;
-
-	public CSVWriter(ConfigurationManager configuration) {
+	
+	static {
 		try {
-			this.configuration = configuration;
-			this.writer = new FileWriter(this.configuration.getOutputCsv());
-			this.appSuccss = new FileWriter("app_extracted.txt");
+			writer = new FileWriter(ConfigurationManager.getInstance().getOutputCsv());
+			appSuccss = new FileWriter("app_extracted.txt");
 		} catch (IOException e) {
-			System.err.println("An error occurred while reading the input csv");
+			System.err.println("A problem occurred while reading configuration file");
+			e.printStackTrace();
 		}
 	}
 
