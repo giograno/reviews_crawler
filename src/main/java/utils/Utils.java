@@ -21,7 +21,7 @@ public class Utils {
 	 * @param dateToParse in format dd/MM/yyyy
 	 * @return a <code>Date</code>
 	 */
-	public static Date getDateFromString(String dateToParse) {
+	public synchronized static Date getDateFromString(String dateToParse) {
 		Date date = null;
 		
         try {
@@ -40,7 +40,7 @@ public class Utils {
 	 * @param dateToParse
 	 * @return
 	 */
-	public static Date getExtendedDateFromString(String dateToParse) {
+	public synchronized static Date getExtendedDateFromString(String dateToParse) {
 		Date date = null;
 		
         try {
@@ -52,7 +52,7 @@ public class Utils {
         return date;
 	}
 	
-	public static String convertReviewFormat(String reviewDate) {
+	public synchronized static String convertReviewFormat(String reviewDate) {
 		String aux = null;
 		try {
 			aux =formatter.format(lastUpdateFormatter.parse(reviewDate));
@@ -67,7 +67,7 @@ public class Utils {
 	 * @param date	the date to convert
 	 * @return		the date as a string
 	 */
-	public static String getStringFromDate(Date date) {
+	public synchronized static String getStringFromDate(Date date) {
 		return lastUpdateFormatter.format(date);
 	}
 	
