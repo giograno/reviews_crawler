@@ -57,7 +57,7 @@ public class GoogleReviewsCrawler extends Crawler {
 			System.out.println("It is no possibile to see the reviews for: " + this.appName);
 			if (this.writer instanceof CSVWriter)
 				((CSVWriter) this.writer).writeSuccess(this.appName);
-			this.driver.close();
+			this.driver.quit();
 			return;
 		}
 		scrollPage(0, -250);
@@ -70,8 +70,7 @@ public class GoogleReviewsCrawler extends Crawler {
 			this.writer.writeline(review);
 		}
 		
-		if (reviews.size() > 0) 
-			if (this.writer instanceof CSVWriter)
+		if (this.writer instanceof CSVWriter)
 				((CSVWriter) this.writer).writeSuccess(this.appName);
 		System.out.println(
 				"Extraction completed for: " + this.appName + "\nTotal reviews extracted = " + this.reviews.size());
