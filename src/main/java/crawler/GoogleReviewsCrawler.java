@@ -89,6 +89,13 @@ public class GoogleReviewsCrawler extends Crawler {
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
 		this.instanceDriver();
+		
+		// instantiate the writer
+		try {
+			this.writer = WriterFactory.getWriter();
+		} catch (ConfigurationException e) {
+			System.err.println(e.getMessage());
+		}
 
 		driver.manage().window().maximize();
 		driver.navigate().to(appLink);
@@ -132,11 +139,6 @@ public class GoogleReviewsCrawler extends Crawler {
 
 	private void getReviewsByDriver() {
 
-		try {
-			this.writer = WriterFactory.getWriter();
-		} catch (ConfigurationException e) {
-			System.err.println(e.getMessage());
-		}
 		boolean isTheLastPage = false;
 
 		sleep(2000);
