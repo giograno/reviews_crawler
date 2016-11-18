@@ -80,23 +80,25 @@ public class GoogleReviewsCrawler extends Crawler {
 	private void setDriverAndConnect(String appName) {
 		this.reviews 		= new ArrayList<>();
 		this.reviewsCounter = 0;
+		
+		// instantiate the writer
+		try {
+			this.writer = WriterFactory.getWriter();
+		} catch (ConfigurationException e) {
+			System.err.println("Configuration error while getting the driver");
+		}
+		
 		this.startingDate 	= configuration.getStartingDate() == null ? 
 				null : configuration.getStartingDate();
-		this.endingDate 	= configuration.getEndDate() == null ? 
-				Utils.getFakeOldDate() : configuration.getEndDate();
+		
+		// get the end date from the IWriter object
+		this.endingDate 	= this.writer.getLastDate(this.configuration, this.appName);
 		this.limit 			= configuration.getLimit();
 
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
 		this.instanceDriver();
 		
-		// instantiate the writer
-		try {
-			this.writer = WriterFactory.getWriter();
-		} catch (ConfigurationException e) {
-			System.err.println(e.getMessage());
-		}
-
 		driver.manage().window().maximize();
 		driver.navigate().to(appLink);
 	}

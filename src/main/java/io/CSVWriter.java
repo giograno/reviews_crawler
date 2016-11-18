@@ -2,10 +2,12 @@ package io;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import beans.Exportable;
 import config.ConfigurationManager;
+import utils.Utils;
 
 /**
  * An utility class used to write the extracted info to a output csv
@@ -95,5 +97,11 @@ public class CSVWriter implements IWriter {
 			result = result.replace(",", " ");
 
 		return result;
+	}
+
+	@Override
+	public Date getLastDate(ConfigurationManager config, String appName) {
+		return config.getEndDate() == null ? 
+				Utils.getFakeOldDate() : config.getEndDate();
 	}
 }
