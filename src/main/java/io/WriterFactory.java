@@ -12,7 +12,7 @@ public class WriterFactory {
 		if (howToSave.equals("file"))
 			return new CSVWriter();
 		else if (howToSave.equals("mongodb"))
-			return null;
+			return new MongoDBWriter();
 		else
 			throw new ConfigurationException("kind of driver -> " + howToSave); 
 		

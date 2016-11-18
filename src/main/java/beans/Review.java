@@ -1,11 +1,12 @@
 package beans;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Property;
 
 import utils.Utils;
 
@@ -16,15 +17,19 @@ import utils.Utils;
  * @author giograno
  *
  */
+@Entity
 public class Review implements Exportable {
 	
+	@Id
 	private String id;
+	@Property
 	private String appName;
+	@Property
 	private String reviewText;
+	@Property
 	private Date reviewDate;
+	@Property
 	private int numberOfStars;
-
-	private DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
 
 	public Review(String id, String appName, String reviewText, Date reviewDate, int numberOfStars) {
 		this.id 			= id;
@@ -33,6 +38,8 @@ public class Review implements Exportable {
 		this.reviewDate 	= reviewDate;
 		this.numberOfStars 	= numberOfStars;
 	}
+	
+	public Review(){ }
 	
 	public String getId() {
 		return id;
@@ -52,14 +59,6 @@ public class Review implements Exportable {
 
 	public void setAppName(String appName) {
 		this.appName = appName;
-	}
-
-	public DateFormat getFormatter() {
-		return formatter;
-	}
-
-	public void setFormatter(DateFormat formatter) {
-		this.formatter = formatter;
 	}
 
 	public void setReviewText(String reviewText) {

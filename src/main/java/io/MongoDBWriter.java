@@ -1,28 +1,41 @@
 package io;
 
-import org.bson.Document;
+import java.util.Date;
+import java.util.List;
+
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.Query;
 
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
 import beans.Exportable;
+import beans.Review;
 
 public class MongoDBWriter implements IWriter {
 
-	private MongoClient client;
-	private MongoDatabase db;
-	private MongoCollection<Document> collection;
-	
+	private Morphia morphia;
+	private Datastore datastore;
+
 	public MongoDBWriter() {
-		this.client = new MongoClient();
-		this.db = client.getDatabase("myDB");
-		this.collection = db.getCollection("reviews");
+		this.morphia = new Morphia();
+		morphia.map(Review.class);
+		this.datastore = morphia.createDatastore(new MongoClient(),	"reviews");		
+		datastore.ensureIndexes();
 	}
 	
 	@Override
 	public void writeline(Exportable exportable) {
-		// TODO Auto-generated method stub
+		this.datastore.save(exportable);
 	}
 
+	public List<Review> getReviewsFromDB(String appName) {
+		Query<Review> query = this.datastore.createQuery(Review.class)
+				.field("appName").equal(appName);
+		return query.asList();
+	}
+	
+	public Date lastReviewForApp(String appName) {
+		return null;
+	}
 }

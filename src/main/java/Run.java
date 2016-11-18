@@ -10,6 +10,7 @@ public class Run {
 
 	private static final int RUNNER_REVIEW = 0;
 	private static final int RUNNER_INFO = 1;
+	private static final int RUNNER_EXPORTER = 2;
 
 	private int runnerType;
 
@@ -48,6 +49,10 @@ public class Run {
 			System.out.println("Running the app info extractor");
 			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "info");
 			break;
+		case RUNNER_EXPORTER:
+			System.out.println("Exporting the reviews");
+			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "export");
+			break;
 		}
 		extractor.printNumberOfInputApps();
 		extractor.extract();
@@ -67,6 +72,8 @@ public class Run {
 				this.runnerType = RUNNER_REVIEW;
 			} else if (value.equalsIgnoreCase("info")) {
 				this.runnerType = RUNNER_INFO;
+			} else if (value.equalsIgnoreCase("export")) {
+				this.runnerType = RUNNER_EXPORTER;
 			} else
 				throw new IllegalArgumentException(
 						"Illegal run type '" + value);
