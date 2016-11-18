@@ -6,11 +6,11 @@ import java.util.List;
 import beans.Review;
 import config.ConfigurationManager;
 import io.CSVWriter;
-import io.MongoDBWriter;
+import io.MongoDBHandler;
 
 public class DatabaseExtractor extends Extractor {
 	
-	private MongoDBWriter mongo = new MongoDBWriter();
+	private MongoDBHandler mongo = new MongoDBHandler();
 	private CSVWriter csvWriter = new CSVWriter();
 
 	public DatabaseExtractor(ArrayList<String> inputApps, ConfigurationManager config) {
