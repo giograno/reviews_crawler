@@ -5,6 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
+
 /**
  * Provides some utilities like dates conversion
  * @author grano
@@ -15,6 +19,7 @@ public class Utils {
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 	private static SimpleDateFormat lastUpdateFormatter = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
 
+	private static TimeBasedGenerator TB_GENERATOR = Generators.timeBasedGenerator(EthernetAddress.fromInterface());
 	
 	/**
 	 * Formats a <code>String</code> into a <code>Date</code>
@@ -79,6 +84,14 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return fakeDate;
+	}
+	
+	/**
+	 * Returns a string which contains a unique UUID based on actual time 
+	 * @return	a string of the UUID
+	 */
+	public static String getTimeBasedUUID() {
+	    return TB_GENERATOR.generate().toString();
 	}
 	
 	/**

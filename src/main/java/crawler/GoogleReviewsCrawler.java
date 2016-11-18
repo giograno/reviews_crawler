@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -200,7 +201,8 @@ public class GoogleReviewsCrawler extends Crawler {
 						// continue if before the starting date
 						if (this.startingDate != null && date.before(this.startingDate)) 
 							continue;
-						Review newReview = new Review(this.appName, reviewText, date, this.getNumberOfStars(review));
+						String id = Utils.getTimeBasedUUID();
+						Review newReview = new Review(id, this.appName, reviewText, date, this.getNumberOfStars(review));
 						this.reviews.add(newReview);
 						
 						this.reviewsCounter++;

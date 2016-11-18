@@ -18,6 +18,7 @@ import utils.Utils;
  */
 public class Review implements Exportable {
 	
+	private String id;
 	private String appName;
 	private String reviewText;
 	private Date reviewDate;
@@ -25,10 +26,23 @@ public class Review implements Exportable {
 
 	private DateFormat formatter = new SimpleDateFormat("MMMM dd,yyyy", Locale.ENGLISH);
 
-	public Review(String appName, String reviewText, Date reviewDate, int numberOfStars) {
-		this.appName = appName;
-		this.reviewText = reviewText;
-		this.reviewDate = reviewDate;
+	public Review(String id, String appName, String reviewText, Date reviewDate, int numberOfStars) {
+		this.id 			= id;
+		this.appName 		= appName;
+		this.reviewText 	= reviewText;
+		this.reviewDate 	= reviewDate;
+		this.numberOfStars 	= numberOfStars;
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setNumberOfStars(int numberOfStars) {
 		this.numberOfStars = numberOfStars;
 	}
 
@@ -71,6 +85,7 @@ public class Review implements Exportable {
 	@Override
 	public List<String> getFieldsToExport() {
 		List<String> fields = new ArrayList<String>();
+		fields.add(this.id);
 		fields.add(this.appName);
 		fields.add(this.reviewText);
 		fields.add(Utils.getStringFromDate(this.reviewDate));
