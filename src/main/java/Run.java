@@ -11,6 +11,7 @@ public class Run {
 	private static final int RUNNER_REVIEW = 0;
 	private static final int RUNNER_INFO = 1;
 	private static final int RUNNER_EXPORTER = 2;
+	private static final int RUNNER_IMPORTER = 3;
 
 	private int runnerType;
 
@@ -53,6 +54,8 @@ public class Run {
 			System.out.println("Exporting the reviews");
 			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "export");
 			break;
+		case RUNNER_IMPORTER:
+			System.out.println("Importing reviews from file");
 		}
 		extractor.printNumberOfInputApps();
 		extractor.extract();
@@ -77,6 +80,12 @@ public class Run {
 			} else
 				throw new IllegalArgumentException(
 						"Illegal run type '" + value);
+		} else if (property.equalsIgnoreCase("import")) {
+			if (value.equalsIgnoreCase("reviews")) {
+				
+			} else
+				throw new IllegalArgumentException(
+						"Illegal run type '" + value);
 		}
-	}
+ 	}
 }

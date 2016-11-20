@@ -156,6 +156,10 @@ public class GoogleReviewsCrawler extends Crawler {
 			if (mine) {
 				newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 				maximumReviews = newReviewsAsWebElement.size();
+				if (indexToStart == maximumReviews) {
+					isTheLastPage = true;
+					continue;
+				}
 			}
 
 			indexToStart = this.getReviewsOfThePage(newReviewsAsWebElement, indexToStart,
@@ -207,6 +211,9 @@ public class GoogleReviewsCrawler extends Crawler {
 						this.reviews.add(newReview);
 						
 						this.reviewsCounter++;
+						if (this.reviewsCounter == 280){
+							System.out.println("STOP");
+						}
 						if ((this.reviewsCounter % 50) == 0)
 							System.out.println(
 									"Mined " + this.reviewsCounter + " for " + this.appName + " - Date = " + date);
