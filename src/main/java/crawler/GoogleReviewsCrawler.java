@@ -205,7 +205,7 @@ public class GoogleReviewsCrawler extends Crawler {
 					continue;
 
 				if (this.endingDate != null) {
-					date = Utils.getExtendedDateFromString(dateAsText);
+					date = Utils.getExtendedDateFromString(dateAsText.replaceAll(",", ""));
 					if (date.after(endingDate)) {
 						// continue if before the starting date
 						if (this.startingDate != null && date.before(this.startingDate)) 

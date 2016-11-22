@@ -39,6 +39,14 @@ public class Review implements Exportable {
 		this.numberOfStars 	= numberOfStars;
 	}
 	
+	public Review(String[] reviewLine) {
+		this.id 			= reviewLine[0];
+		this.appName 		= reviewLine[1];
+		this.reviewText 	= reviewLine[2];
+		this.reviewDate 	= Utils.getExtendedDateFromString(reviewLine[3]);
+		this.numberOfStars 	= Integer.parseInt(reviewLine[4]);
+	}
+	
 	public Review(){ }
 	
 	public String getId() {
