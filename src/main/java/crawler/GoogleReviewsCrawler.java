@@ -199,6 +199,10 @@ public class GoogleReviewsCrawler extends Crawler {
 
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
+				
+				// go to the next review if this one is not ok
+				if (!isAValidReview(reviewText))
+					continue;
 
 				if (this.endingDate != null) {
 					date = Utils.getExtendedDateFromString(dateAsText);
@@ -211,9 +215,6 @@ public class GoogleReviewsCrawler extends Crawler {
 						this.reviews.add(newReview);
 						
 						this.reviewsCounter++;
-						if (this.reviewsCounter == 280){
-							System.out.println("STOP");
-						}
 						if ((this.reviewsCounter % 50) == 0)
 							System.out.println(
 									"Mined " + this.reviewsCounter + " for " + this.appName + " - Date = " + date);
@@ -229,6 +230,20 @@ public class GoogleReviewsCrawler extends Crawler {
 		}
 
 		return indexToStart;
+	}
+	
+	/**
+	 * Checks if a stings is valid as a review; at least one valid alphabet letter
+	 * should be in the text
+	 * @param reviewText	the review text
+	 * @return				true or false
+	 */
+	private boolean isAValidReview(String reviewText) {
+		if (reviewText.trim().equals(""))
+			return false;
+		if (reviewText.matches(".*[a-zA-Z]+.*"))
+			return true;
+		return false;
 	}
 
 	/**
