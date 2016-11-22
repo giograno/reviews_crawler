@@ -23,6 +23,7 @@ public class DatabaseExtractor extends Extractor {
 		for (String app : appsToMine) {
 			List<Review> reviews = mongo.getReviewsFromDB(app);
 			this.writeReviewForAnApp(reviews);
+			System.out.println("Extracted " + reviews.size() + " reviews for " + app);
 		}
 	}
 
@@ -31,4 +32,9 @@ public class DatabaseExtractor extends Extractor {
 			this.csvWriter.writeline(review);
 		}
 	}
+
+	@Override
+	public void printNumberOfInputApps() {
+		System.out.println(super.appsToMine.size() + " apps to extract");
+	}	
 }

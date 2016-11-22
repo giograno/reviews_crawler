@@ -11,6 +11,7 @@ import com.mongodb.MongoClient;
 
 import beans.Exportable;
 import beans.Review;
+import config.ConfigurationManager;
 
 /**
  * Handles the connections with the mongodb database
@@ -50,4 +51,9 @@ public class MongoDBHandler implements IWriter {
 				.order("-reviewDate").get();
 		return last.getReviewDate();
 	}
+
+	@Override
+	public Date getLastDate(ConfigurationManager config, String appName) {
+		return this.getLastReviewForApp(appName);
+	}	 
 }
