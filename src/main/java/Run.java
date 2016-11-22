@@ -1,6 +1,7 @@
 import config.ConfigurationManager;
 import extractors.Extractor;
 import extractors.ExtractorFactory;
+import importer.FileImporter;
 import io.AppListReader;
 import io.CSVReader;
 import io.TxtReader;
@@ -8,10 +9,10 @@ import io.TxtReader;
 @SuppressWarnings("deprecation")
 public class Run {
 
-	private static final int RUNNER_REVIEW = 0;
-	private static final int RUNNER_INFO = 1;
-	private static final int RUNNER_EXPORTER = 2;
-	private static final int RUNNER_IMPORTER = 3;
+	private static final int RUNNER_REVIEW 		= 0;
+	private static final int RUNNER_INFO 		= 1;
+	private static final int RUNNER_EXPORTER 	= 2;
+	private static final int RUNNER_IMPORTER 	= 3;
 
 	private int runnerType;
 
@@ -45,20 +46,27 @@ public class Run {
 		case RUNNER_REVIEW:
 			System.out.println("Running the review extractor");
 			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "reviews");
+			extractor.printNumberOfInputApps();
+			extractor.extract();
 			break;
 		case RUNNER_INFO:
 			System.out.println("Running the app info extractor");
 			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "info");
+			extractor.printNumberOfInputApps();
+			extractor.extract();
 			break;
 		case RUNNER_EXPORTER:
 			System.out.println("Exporting the reviews");
 			extractor = ExtractorFactory.getExtractor(reader.getAppList(), config, "export");
+			extractor.printNumberOfInputApps();
+			extractor.extract();
 			break;
 		case RUNNER_IMPORTER:
 			System.out.println("Importing reviews from file");
+			FileImporter importer = new FileImporter(config);
+			importer.importReviews();
+			break;
 		}
-		extractor.printNumberOfInputApps();
-		extractor.extract();
 	}
 
 	public void interpret(String arg) {
@@ -82,7 +90,7 @@ public class Run {
 						"Illegal run type '" + value);
 		} else if (property.equalsIgnoreCase("import")) {
 			if (value.equalsIgnoreCase("reviews")) {
-				
+				this.runnerType = RUNNER_IMPORTER;
 			} else
 				throw new IllegalArgumentException(
 						"Illegal run type '" + value);

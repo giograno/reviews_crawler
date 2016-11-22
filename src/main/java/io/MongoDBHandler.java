@@ -55,7 +55,5 @@ public class MongoDBHandler implements IWriter {
 	@Override
 	public Date getLastDate(ConfigurationManager config, String appName) {
 		return this.getLastReviewForApp(appName);
-	}
-	
-	 
+	}	 
 }
