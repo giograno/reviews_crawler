@@ -43,7 +43,6 @@ public class GoogleInfoCrawler extends Crawler {
 		this.driver = new PhantomJSDriver(caps);
 	}
 
-	@Override
 	public void run() {
 
 		for (String appName : appList) {
@@ -128,5 +127,11 @@ public class GoogleInfoCrawler extends Crawler {
 
 	private boolean isAppLinkNotValid() {
 		return this.isElementPresent(By.id("error-section"));
+	}
+
+	@Override
+	public Integer call() throws Exception {
+		this.run();
+		return this.appList.size();
 	}
 }

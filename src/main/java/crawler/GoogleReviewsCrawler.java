@@ -45,7 +45,6 @@ public class GoogleReviewsCrawler extends Crawler {
 		this.configuration 	= configuration;
 	}
 
-	@Override
 	public void run() {
 		System.out.println("Extraction started for = " + this.appName);
 
@@ -313,6 +312,12 @@ public class GoogleReviewsCrawler extends Crawler {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public Integer call() throws Exception {
+		this.run();
+		return this.reviews.size();
 	}
 
 }

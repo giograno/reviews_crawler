@@ -3,6 +3,7 @@ package extractors;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import config.ConfigurationManager;
 import crawler.Crawler;
@@ -26,8 +27,12 @@ public class ReviewExtractor extends Extractor {
 			ArrayList<String> aux = new ArrayList<>();
 			aux.add(currentApp);
 			Crawler googlePlayStoreCrawler = CrawlerFactory.getCrawler(this.configurationManager, aux, "google");
-//			googlePlayStoreCrawler.run();
-			executor.execute(googlePlayStoreCrawler);
+			Future<Integer> future = executor.submit(googlePlayStoreCrawler);
+			try {
+				future.get();
+			} catch (Exception e) {
+				System.err.println("It was not possibile to mine the review for " + currentApp);
+			} 
 		}
 		executor.shutdown();
 		

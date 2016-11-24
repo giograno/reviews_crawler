@@ -1,10 +1,12 @@
 package crawler;
 
+import java.util.concurrent.Callable;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
-public abstract class Crawler implements Runnable { 
+public abstract class Crawler implements Callable<Integer> { 
 	
 	protected WebDriver driver;
 	
