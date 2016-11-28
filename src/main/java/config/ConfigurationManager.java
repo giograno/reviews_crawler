@@ -154,7 +154,7 @@ public class ConfigurationManager {
 	 * @return	the number of threads to use
 	 */
 	public int getNumberOfThreadToUse() {
-		return Integer.parseInt(this.properties.getProperty("thread", "1"))	;
+		return Integer.parseInt(this.properties.getProperty("thread", "2"))	;
 	}
 	
 	/**
