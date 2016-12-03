@@ -11,7 +11,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 public abstract class Crawler implements Runnable { 
-	
+
 	protected WebDriver driver;
 	
 	/**

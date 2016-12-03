@@ -19,7 +19,6 @@ public interface IWriter {
 	 */
 	public void writeline(Exportable exportable);
 
-	
 	/**
 	 * Returns the date of the last reviews crawled for a given app
 	 * @param config	the configuration manager

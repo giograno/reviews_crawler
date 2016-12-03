@@ -43,7 +43,6 @@ public class GoogleInfoCrawler extends Crawler {
 		this.driver = new PhantomJSDriver(caps);
 	}
 
-	@Override
 	public void run() {
 
 		for (String appName : appList) {

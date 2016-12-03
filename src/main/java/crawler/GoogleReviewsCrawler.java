@@ -50,7 +50,6 @@ public class GoogleReviewsCrawler extends Crawler {
 		this.configuration 	= configuration;
 	}
 
-	@Override
 	public void run() {
 		System.out.println("Extraction started for = " + this.appName);
 
@@ -158,6 +157,10 @@ public class GoogleReviewsCrawler extends Crawler {
 			if (mine) {
 				newReviewsAsWebElement = getAllReviewsOfCurrentPage();
 				maximumReviews = newReviewsAsWebElement.size();
+				if (indexToStart == maximumReviews) {
+					isTheLastPage = true;
+					continue;
+				}
 			}
 
 			indexToStart = this.getReviewsOfThePage(newReviewsAsWebElement, indexToStart,
@@ -197,9 +200,13 @@ public class GoogleReviewsCrawler extends Crawler {
 
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
+				
+				// go to the next review if this one is not ok
+				if (!isAValidReview(reviewText))
+					continue;
 
 				if (this.endingDate != null) {
-					date = Utils.getExtendedDateFromString(dateAsText);
+					date = Utils.getExtendedDateFromString(dateAsText.replaceAll(",", ""));
 					if (date.after(endingDate)) {
 						// continue if before the starting date
 						if (this.startingDate != null && date.before(this.startingDate)) 
@@ -224,6 +231,20 @@ public class GoogleReviewsCrawler extends Crawler {
 		}
 
 		return indexToStart;
+	}
+	
+	/**
+	 * Checks if a stings is valid as a review; at least one valid alphabet letter
+	 * should be in the text
+	 * @param reviewText	the review text
+	 * @return				true or false
+	 */
+	private boolean isAValidReview(String reviewText) {
+		if (reviewText.trim().equals(""))
+			return false;
+		if (reviewText.matches(".*[a-zA-Z]+.*"))
+			return true;
+		return false;
 	}
 
 	/**
@@ -294,5 +315,4 @@ public class GoogleReviewsCrawler extends Crawler {
 			e.printStackTrace();
 		}
 	}
-
 }

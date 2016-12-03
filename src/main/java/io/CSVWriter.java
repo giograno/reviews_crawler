@@ -101,7 +101,9 @@ public class CSVWriter implements IWriter {
 
 	@Override
 	public Date getLastDate(ConfigurationManager config, String appName) {
-		return config.getEndDate() == null ? 
-				Utils.getFakeOldDate() : config.getEndDate();
+		return config.getEndDate() == null ? Utils.getFakeOldDate() : config.getEndDate();
 	}
+
 }
+
+

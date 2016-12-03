@@ -9,7 +9,6 @@ import io.TxtReader;
 @SuppressWarnings("deprecation")
 public class Run {
 
-
 	private static final int RUNNER_REVIEW 		= 0;
 	private static final int RUNNER_INFO 		= 1;
 	private static final int RUNNER_EXPORTER 	= 2;
@@ -21,6 +20,7 @@ public class Run {
 
 		Run runner = new Run(args);
 		runner.run();
+		System.exit(0);
 	}
 
 	public Run(String[] args) {
@@ -96,5 +96,5 @@ public class Run {
 				throw new IllegalArgumentException(
 						"Illegal run type '" + value);
 		}
-	}
+ 	}
 }

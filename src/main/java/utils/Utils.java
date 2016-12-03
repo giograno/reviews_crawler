@@ -17,7 +17,7 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
 public class Utils {
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-	private static SimpleDateFormat lastUpdateFormatter = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
+	private static SimpleDateFormat lastUpdateFormatter = new SimpleDateFormat("MMMM dd yyyy", Locale.ENGLISH);
 
 	private static TimeBasedGenerator TB_GENERATOR = Generators.timeBasedGenerator(EthernetAddress.fromInterface());
 	
