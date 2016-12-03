@@ -15,6 +15,7 @@ import config.ConfigurationManager;
 
 /**
  * Handles the connections with the mongodb database
+ * and it is used to performs all the major CRUD operations
  * @author grano
  *
  */
@@ -46,7 +47,7 @@ public class MongoDBHandler implements IWriter {
 	 * @param appName	the name of the app
 	 * @return			the <Date> of the last review for the given app
 	 */
-	public Date getLastReviewForApp(String appName) {
+	private Date getLastReviewForApp(String appName) {
 		Review last = this.datastore.find(Review.class)
 				.order("-reviewDate").get();
 		return last.getReviewDate();

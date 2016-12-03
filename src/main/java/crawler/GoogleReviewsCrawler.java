@@ -27,6 +27,11 @@ import utils.ConfigurationException;
 import utils.Utils;
 import utils.WebElements;
 
+/**
+ * The crawler for the Google PlayStore
+ * @author grano
+ *
+ */
 public class GoogleReviewsCrawler extends Crawler {
 
 	private boolean endingDateReached = false;
@@ -78,18 +83,6 @@ public class GoogleReviewsCrawler extends Crawler {
 	}
 
 	private void setDriverAndConnect(String appName) {
-		this.reviews 		= new ArrayList<>();
-		this.reviewsCounter = 0;
-		this.startingDate 	= configuration.getStartingDate() == null ? 
-				null : configuration.getStartingDate();
-		this.endingDate 	= configuration.getEndDate() == null ? 
-				Utils.getFakeOldDate() : configuration.getEndDate();
-		this.limit 			= configuration.getLimit();
-
-		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
-
-		this.instanceDriver();
-		
 		// instantiate the writer
 		try {
 			this.writer = WriterFactory.getWriter();
@@ -97,6 +90,17 @@ public class GoogleReviewsCrawler extends Crawler {
 			System.err.println(e.getMessage());
 		}
 
+		this.reviews 		= new ArrayList<>();
+		this.reviewsCounter = 0;
+		// get the date of the last reviews crawler (for mongoDB) 
+		// or the last date to consider in the crawling process for the csv extraction
+		this.endingDate		= this.writer.getLastDate(this.configuration, this.appName);
+		this.limit 			= configuration.getLimit();
+
+		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
+
+		this.instanceDriver();
+		
 		driver.manage().window().maximize();
 		driver.navigate().to(appLink);
 	}
