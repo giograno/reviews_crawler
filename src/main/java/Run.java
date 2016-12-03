@@ -20,7 +20,6 @@ public class Run {
 
 		Run runner = new Run(args);
 		runner.run();
-		System.exit(0);
 	}
 
 	public Run(String[] args) {

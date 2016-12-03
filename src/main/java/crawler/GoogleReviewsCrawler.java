@@ -50,6 +50,7 @@ public class GoogleReviewsCrawler extends Crawler {
 		this.configuration 	= configuration;
 	}
 
+	@Override
 	public void run() {
 		System.out.println("Extraction started for = " + this.appName);
 
@@ -88,7 +89,7 @@ public class GoogleReviewsCrawler extends Crawler {
 		} catch (ConfigurationException e) {
 			System.err.println(e.getMessage());
 		}
-
+		
 		this.reviews 		= new ArrayList<>();
 		this.reviewsCounter = 0;
 		// get the date of the last reviews crawler (for mongoDB) 

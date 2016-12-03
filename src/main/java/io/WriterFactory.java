@@ -18,7 +18,7 @@ public class WriterFactory {
 	public static IWriter getWriter() throws ConfigurationException {
 		ConfigurationManager configuration = ConfigurationManager.getInstance();
 		String howToSave = configuration.getHowToStore();
-		
+		System.out.println(howToSave);
 		if (howToSave.equals("file"))
 			return new CSVWriter();
 		else if (howToSave.equals("mongodb"))
