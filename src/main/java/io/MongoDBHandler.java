@@ -52,6 +52,8 @@ public class MongoDBHandler implements IWriter {
 		query.criteria("appName").equal(appName);
 		query.order("-reviewDate").get();
 		List<Review> reviews = query.asList();
+		if (reviews.isEmpty() || reviews == null)
+			return null;
 		Review lastReview = reviews.get(0);
 		return lastReview.getReviewDate();
 	}

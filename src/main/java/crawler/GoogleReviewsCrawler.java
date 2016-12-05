@@ -95,6 +95,8 @@ public class GoogleReviewsCrawler extends Crawler {
 		// get the date of the last reviews crawler (for mongoDB) 
 		// or the last date to consider in the crawling process for the csv extraction
 		this.endingDate		= this.writer.getLastDate(this.configuration, this.appName);
+		if (this.endingDate == null)
+			this.endingDate = Utils.getFakeOldDate();
 		System.out.println("Mining from last review date = " + this.endingDate);
 		this.limit 			= configuration.getLimit();
 		
@@ -110,7 +112,7 @@ public class GoogleReviewsCrawler extends Crawler {
 	
 	/**
 	 * Waits until next button is clickable and clicks it
-	 */
+	 */ 
 	private void clickNextButton() {
 		this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)));
 		WebElement nextButton = driver.findElements(By.xpath(WebElements.NEXT_REVIEWS_BUTTON)).get(1);
