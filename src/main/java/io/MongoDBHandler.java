@@ -48,9 +48,12 @@ public class MongoDBHandler implements IWriter {
 	 * @return			the <Date> of the last review for the given app
 	 */
 	private Date getLastReviewForApp(String appName) {
-		Review last = this.datastore.find(Review.class)
-				.order("-reviewDate").get();
-		return last.getReviewDate();
+		Query<Review> query = this.datastore.createQuery(Review.class);
+		query.criteria("appName").equal(appName);
+		query.order("-reviewDate").get();
+		List<Review> reviews = query.asList();
+		Review lastReview = reviews.get(0);
+		return lastReview.getReviewDate();
 	}
 
 	@Override

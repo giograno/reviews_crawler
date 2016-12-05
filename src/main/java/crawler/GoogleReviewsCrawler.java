@@ -95,7 +95,10 @@ public class GoogleReviewsCrawler extends Crawler {
 		// get the date of the last reviews crawler (for mongoDB) 
 		// or the last date to consider in the crawling process for the csv extraction
 		this.endingDate		= this.writer.getLastDate(this.configuration, this.appName);
+		System.out.println("Mining from last review date = " + this.endingDate);
 		this.limit 			= configuration.getLimit();
+		
+		System.out.println("Crawling from " + this.endingDate);
 
 		String appLink = WebElements.PLAY_STORE_BASE_LINK + appName + WebElements.REVIEWS_LANGUAGE;
 
