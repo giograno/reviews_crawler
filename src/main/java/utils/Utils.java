@@ -18,6 +18,7 @@ public class Utils {
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 	private static SimpleDateFormat lastUpdateFormatter = new SimpleDateFormat("MMMM dd yyyy", Locale.ENGLISH);
+	private static SimpleDateFormat infoFormatter = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
 
 	private static TimeBasedGenerator TB_GENERATOR = Generators.timeBasedGenerator(EthernetAddress.fromInterface());
 	
@@ -60,7 +61,7 @@ public class Utils {
 	public synchronized static String convertReviewFormat(String reviewDate) {
 		String aux = null;
 		try {
-			aux =formatter.format(lastUpdateFormatter.parse(reviewDate));
+			aux =formatter.format(infoFormatter.parse(reviewDate));
 		} catch (ParseException e) {
 			System.err.println("An error occurred while parsing the date");
 		}
