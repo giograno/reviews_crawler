@@ -15,7 +15,16 @@ public class AppInfo implements Exportable {
 	private String lastUpdate;
 	private String currentVersion;
 	private String category;
+	private String numDownloads;
 	
+	public String getNumDownloads() {
+		return numDownloads;
+	}
+
+	public void setNumDownloads(String numDownloads) {
+		this.numDownloads = numDownloads;
+	}
+
 	public String getCategory() {
 		return category;
 	}
@@ -55,6 +64,7 @@ public class AppInfo implements Exportable {
 		fields.add(category);
 		fields.add(currentVersion);
 		fields.add(lastUpdate);
+		fields.add(numDownloads);
 		return fields;
 	}
 

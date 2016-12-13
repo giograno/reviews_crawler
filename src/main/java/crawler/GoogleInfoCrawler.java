@@ -84,10 +84,11 @@ public class GoogleInfoCrawler extends Crawler {
 		if (!isAppLinkNotValid()) {
 
 			try {
-				appInfo 		= new AppInfo();
-				String upDate 	= "n.d";
-				String version 	= "n.d";
-				String category = "n.d";
+				appInfo 			= new AppInfo();
+				String upDate 		= "n.d";
+				String version 		= "n.d";
+				String category		= "n.d";
+				String noDownloads	= "n.d";
 
 				if (this.aLastUpdateExists())
 					upDate = driver.findElement(By.xpath(WebElements.LAST_UPDATE)).getText();
@@ -96,11 +97,13 @@ public class GoogleInfoCrawler extends Crawler {
 				else if (this.aRequiredSoftwareExists())
 					version = driver.findElement(By.xpath(WebElements.REQUIRE_SOFTWARE)).getText();
 				category = driver.findElement(By.xpath(WebElements.CATEGORY)).getText();
+				noDownloads = driver.findElement(By.xpath(WebElements.NUM_DOWNLOADS)).getText();
 
 				appInfo.setAppName(currentApp);
 				appInfo.setCurrentVersion(version);
 				appInfo.setCategory(category);
 				appInfo.setLastUpdate(Utils.convertReviewFormat(upDate));
+				appInfo.setNumDownloads(noDownloads);
 				System.out.println("Mined app info for: " + this.currentApp);
 			} catch (NoSuchElementException e) {
 				System.err.println("An error occurred while fetching current version and last update");

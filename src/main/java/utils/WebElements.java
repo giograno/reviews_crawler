@@ -19,6 +19,7 @@ public class WebElements {
 	public static final String STARS					= ".//div[@class='tiny-star star-rating-non-editable-container']";
 	public static final String SECTION_REVIEW      		= "//div[@class='details-section reviews']";
 	public static final String CATEGORY					= "//span[@itemprop='genre']";
+	public static final String NUM_DOWNLOADS 			= "//div[contains(@itemprop, 'numDownloads')]";
 
 	/**
 	 * Returns the <By> object for the chosen reviews order
