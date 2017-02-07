@@ -21,3 +21,12 @@ extractor=info
 ```
 
 the tool will mine the info about an app, like the current version and the last update time.
+
+### Export the mined app
+
+In order to query the DB and export the review, you have to run:
+
+```
+extractor=export
+```
+The reviews for the app specified in the `input_file` parameter of the `configuration.properties` will be extracted.
