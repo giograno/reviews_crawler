@@ -30,3 +30,11 @@ In order to query the DB and export the review, you have to run:
 extractor=export
 ```
 The reviews for the app specified in the `input_file` parameter of the `configuration.properties` will be extracted.
+
+### Import a set of app from a csv file
+
+Configure the `config.properties` file, updated the field `input_file` with the name of the csv to import.
+Then, run the jar with as follow:
+```
+java -jar extractor.jar import=reviews
+```
