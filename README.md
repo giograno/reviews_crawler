@@ -1,40 +1,36 @@
-# Review Crawler
+# Reviews Crawling Tool
 
-A Java based tool that extracts the user reviews for a given app from the related online store. It reads the list of apps to mine from a csv file and write the corresponding review in a csv file of output.
+This tool has been developed with the purpose to mine reviews from the Google Play Store.
+It's entirely written in Java, and relies on [Selenium](http://www.seleniumhq.org/) and on [PhantomJS](http://phantomjs.org).
 
+The tool can save the reviews in a csv format as well storing them using a MongoDB instance.
+
+## How to use
+First of all, you need to download ([here](http://phantomjs.org/download.html)) the right PhantomJS executable according to your underlying operating system. It have to be placed in the same directory of the jar and the properties file.
 ### Configuration
+The tool must be set through its configuration file. You need to specify the input and the output file name. 
 
-The tool must be setted through its configuration file. You have to specify the input and the output file name. The date of last review is automatically updated.
+Most parameters are self explained in the `config.properties` file. The most important ones are detailed in the following paragraph.
 
-### Parameters
+#### Parameters
+> export_to=...
 
-Currently the only permitted parameter is `extractor`. With 
+For this option you can select the option `file` or `mongodb`. The first one will save the reviews on a csv file, the second one will use a mongodb instance.
 
-```
-extractor=reviews
-```
+> input_file=xxx.csv
 
-the tool will mine the reviews of the given apps. Instead, with
+This is the file with the list of app of which the reviews need to be extracted. The file need to report the package name of the app as the first field in the csv. 
+### How to run
+In order to start the reviews mining, you have to run the following command:
 
-```
-extractor=info
-```
+`java -jar extractor.jar extractor=reviews`
 
-the tool will mine the info about an app, like the current version and the last update time.
+The tool will start to extract the reviews for the apps specified in the `input_file` parameter.
 
-### Export the mined app
+#### Extract from mongodb database
 
-In order to query the DB and export the review, you have to run:
+When you are collecting you reviews storing them on a mongodb database, you can export the reviews for the apps you are interested to with the following command:
 
-```
-extractor=export
-```
-The reviews for the app specified in the `input_file` parameter of the `configuration.properties` will be extracted.
+`java -jar extractor.jar extractor=export`
 
-### Import a set of app from a csv file
-
-Configure the `config.properties` file, updated the field `input_file` with the name of the csv to import.
-Then, run the jar with as follow:
-```
-java -jar extractor.jar import=reviews
-```
+You have specify the name of the csv file in output through the `output_file` field in the `config.properties`. Similarly, the `input_file` field should contain a list of the app for which you want to extract the reviews.
