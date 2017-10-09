@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.SURFWriter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -56,10 +57,11 @@ public class GoogleReviewsCrawler extends Crawler {
 
 		this.setDriverAndConnect(this.appName);
 
+		sleep(1000);
 		if (this.areReviewsExpandable())
 			clickNextButton();
 		else {
-			System.out.println("It is no possibile to see the reviews for: " + this.appName);
+			System.out.println("It is no possible to see the reviews for: " + this.appName);
 			if (this.writer instanceof CSVWriter)
 				((CSVWriter) this.writer).writeSuccess(this.appName);
 			this.driver.quit();
@@ -76,7 +78,9 @@ public class GoogleReviewsCrawler extends Crawler {
 		}
 		
 		if (this.writer instanceof CSVWriter)
-				((CSVWriter) this.writer).writeSuccess(this.appName);
+            ((CSVWriter) this.writer).writeSuccess(this.appName);
+        if (this.writer instanceof SURFWriter)
+            ((SURFWriter) writer).finalize(appName);
 		System.out.println(
 				"Extraction completed for: " + this.appName + "\nTotal reviews extracted = " + this.reviews.size());
 		this.driver.quit();
@@ -206,6 +210,8 @@ public class GoogleReviewsCrawler extends Crawler {
 
 				String dateAsText = review.findElement(By.className("review-date")).getText();
 				String reviewText = review.findElement(By.className("review-body")).getText();
+				String author = review.findElement(By.className("author-name")).getText();
+				String title = review.findElement(By.className("review-title")).getText();
 				
 				// go to the next review if this one is not ok
 				if (!isAValidReview(reviewText))
@@ -218,7 +224,13 @@ public class GoogleReviewsCrawler extends Crawler {
 						if (this.startingDate != null && date.before(this.startingDate)) 
 							continue;
 						String id = Utils.getTimeBasedUUID();
-						Review newReview = new Review(id, this.appName, reviewText, date, this.getNumberOfStars(review));
+
+						// todo: To improve
+						Review newReview;
+						if (configuration.getFormat().equalsIgnoreCase("surf"))
+                            newReview = new Review(id, this.appName, reviewText, date, this.getNumberOfStars(review), author, title);
+						else
+						    newReview = new Review(id, this.appName, reviewText, date, this.getNumberOfStars(review));
 						this.reviews.add(newReview);
 						
 						this.reviewsCounter++;
