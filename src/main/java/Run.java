@@ -4,6 +4,7 @@ import extractors.ExtractorFactory;
 import importer.FileImporter;
 import io.AppListReader;
 import io.CSVReader;
+import io.FixedInput;
 import io.TxtReader;
 
 @SuppressWarnings("deprecation")
@@ -15,6 +16,8 @@ public class Run {
 	private static final int RUNNER_IMPORTER 	= 3;
 
 	private int runnerType;
+
+	private String app;
 
 	public static void main(String[] args) throws Exception {
 
@@ -33,15 +36,17 @@ public class Run {
 		
 		AppListReader reader;
 		ConfigurationManager config = ConfigurationManager.getInstance();
-		
-		if (config.getInputCsv().endsWith(".csv"))
+
+		if (app!=null)
+		    reader = new FixedInput(null, app);
+		else if (config.getInputCsv().endsWith(".csv"))
 			reader = new CSVReader(null);
 		else if (config.getInputCsv().endsWith(".txt")) 
 			reader = new TxtReader(null);
 		else 
 			throw new RuntimeException("Invalid format for input file");
 		
-		Extractor extractor = null;
+		Extractor extractor;
 		switch (this.runnerType) {
 		case RUNNER_REVIEW:
 			System.out.println("Running the review extractor");
@@ -77,6 +82,11 @@ public class Run {
 
 		String property = parts[0];
 		String value = parts[1];
+
+        if (property.equalsIgnoreCase("app")) {
+		    if (!value.isEmpty())
+		        app = value;
+        }
 
 		if (property.equalsIgnoreCase("extractor")) {
 			if (value.equalsIgnoreCase("reviews")) {

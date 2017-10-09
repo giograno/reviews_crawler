@@ -34,3 +34,22 @@ When you are collecting you reviews storing them on a mongodb database, you can 
 `java -jar extractor.jar extractor=export`
 
 You have specify the name of the csv file in output through the `output_file` field in the `config.properties`. Similarly, the `input_file` field should contain a list of the app for which you want to extract the reviews.
+
+
+### SURF Tool
+With this tool it is possible to mine user reviews in a format that is compatible with the [SURF tool][surf].
+To be able to do this, you need to setup che configuration file as follow:
+
+```
+extractor=reviews
+export_to=file
+format=surf
+```
+
+The ouput will be a `review.xml` file in the main directory where the command is launched.
+The app in input are the ones listed in the `input_file` file.
+Whether you are interested in mining a single application, you can run the tool with such command:
+
+> java -jar <name.jar> extractor=reviews app=<id_app>
+
+[surf]:http://www.ifi.uzh.ch/en/seal/people/panichella/tools/SURFTool.html

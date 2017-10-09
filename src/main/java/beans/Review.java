@@ -30,13 +30,26 @@ public class Review implements Exportable {
 	private Date reviewDate;
 	@Property
 	private int numberOfStars;
+	private String author;
+	private String title;
 
+	//TODO: refactor with a Builder pattern
 	public Review(String id, String appName, String reviewText, Date reviewDate, int numberOfStars) {
 		this.id 			= id;
 		this.appName 		= appName;
 		this.reviewText 	= reviewText;
 		this.reviewDate 	= reviewDate;
 		this.numberOfStars 	= numberOfStars;
+	}
+
+	public Review(String id, String appName, String reviewText, Date reviewDate, int numberOfStars, String author, String title) {
+		this.id 			= id;
+		this.appName 		= appName;
+		this.reviewText 	= reviewText;
+		this.reviewDate 	= reviewDate;
+		this.numberOfStars 	= numberOfStars;
+		this.author			= author;
+		this.title 			= title;
 	}
 	
 	public Review(String[] reviewLine) {
@@ -89,7 +102,23 @@ public class Review implements Exportable {
 		return numberOfStars;
 	}
 
-	@Override
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
 	public List<String> getFieldsToExport() {
 		List<String> fields = new ArrayList<String>();
 		fields.add(this.id);
@@ -97,6 +126,10 @@ public class Review implements Exportable {
 		fields.add(this.reviewText);
 		fields.add(Utils.getStringFromDate(this.reviewDate));
 		fields.add(String.valueOf(this.numberOfStars));
+		if (author != null && title != null) {
+		    fields.add(author);
+		    fields.add(title);
+        }
 		return fields;
 	}
 

@@ -180,4 +180,12 @@ public class ConfigurationManager {
 	public String getHowToStore() {
 		return this.properties.getProperty("export_to", "file");
 	}
+
+	/**
+	 * Return the format in which the reviews are saved (plain csv or SURF format)
+	 * @return
+	 */
+	public String getFormat() {
+		return this.properties.getProperty("format","csv");
+	}
 }
