@@ -57,7 +57,7 @@ public class GoogleReviewsCrawler extends Crawler {
 
 		this.setDriverAndConnect(this.appName);
 
-		sleep(1000);
+		sleep(2000);
 		if (this.areReviewsExpandable())
 			clickNextButton();
 		else {
@@ -111,6 +111,7 @@ public class GoogleReviewsCrawler extends Crawler {
 		this.instanceDriver();
 		
 		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		driver.navigate().to(appLink);
 	}
 	

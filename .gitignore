@@ -3,6 +3,8 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+src/main/resources
+
 .idea/*
 phantomjsdriver.log
 reviewCrawler.iml
